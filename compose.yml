@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:17.0-alpine3.20
+    environment:
+      POSTGRES_DB: "memowave_db"
+      POSTGRES_USER: "pgadmin"
+      POSTGRES_PASSWORD: "pgadmin"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d database" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 4G
+    networks:
+      - memowave-network
+
+  liquibase:
+    image: liquibase/liquibase:4.32.0
+    environment:
+      LIQUIBASE_COMMAND_URL: "jdbc:postgresql://postgres:5432/memowave_db"
+      LIQUIBASE_COMMAND_DRIVER: "org.postgresql.Driver"
+      LIQUIBASE_COMMAND_USERNAME: "pgadmin"
+      LIQUIBASE_COMMAND_PASSWORD: "pgadmin"
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.xml # Path within the container
+      # LIQUIBASE_COMMAND_COMMAND: update # Command to execute (e.g., update, rollback)
+      # LIQUIBASE_COMMAND_DEFAULT_SCHEMA_NAME: public
+      LIQUIBASE_SEARCH_PATH: /liquibase/changelog
+    command: update
+    volumes:
+      - ./liquibase/changelog:/liquibase/changelog
+      - ./liquibase/scripts:/liquibase/scripts
+    networks:
+      - memowave-network
+    depends_on:
+      postgres:
+        condition: service_healthy # Ensure DB is ready before Liquibase runs
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - memowave-network
+    depends_on:
+      postgres:
+        condition: service_healthy # Ensure DB is ready before Liquibase runs
+
+volumes:
+  database-data:
+  pgadmin-data:
+
+networks:
+  memowave-network:
+    driver: bridge
