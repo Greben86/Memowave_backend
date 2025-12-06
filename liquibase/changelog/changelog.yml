@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - include:
+      file: 001_create_table_users.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 002_insert_root_user.yml
+      relativeToChangelogFile: true

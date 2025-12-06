@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   postgres:
+    container_name: memowave_postgres_container
     image: postgres:17.0-alpine3.20
     environment:
       POSTGRES_DB: "memowave_db"
@@ -27,20 +28,18 @@ services:
       - memowave-network
 
   liquibase:
+    container_name: memowave_liquibase_container
     image: liquibase/liquibase:4.32.0
     environment:
       LIQUIBASE_COMMAND_URL: "jdbc:postgresql://postgres:5432/memowave_db"
       LIQUIBASE_COMMAND_DRIVER: "org.postgresql.Driver"
       LIQUIBASE_COMMAND_USERNAME: "pgadmin"
       LIQUIBASE_COMMAND_PASSWORD: "pgadmin"
-      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.xml # Path within the container
-      # LIQUIBASE_COMMAND_COMMAND: update # Command to execute (e.g., update, rollback)
-      # LIQUIBASE_COMMAND_DEFAULT_SCHEMA_NAME: public
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: changelog.yml # Path within the container
       LIQUIBASE_SEARCH_PATH: /liquibase/changelog
-    command: update
+    command: update # Command to execute (e.g., update, rollback)
     volumes:
       - ./liquibase/changelog:/liquibase/changelog
-      - ./liquibase/scripts:/liquibase/scripts
     networks:
       - memowave-network
     depends_on:
@@ -48,7 +47,7 @@ services:
         condition: service_healthy # Ensure DB is ready before Liquibase runs
 
   pgadmin:
-    container_name: pgadmin_container
+    container_name: memowave_pgadmin_container
     image: dpage/pgadmin4:latest
     environment:
       PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
