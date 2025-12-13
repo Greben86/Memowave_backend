@@ -1,0 +1,27 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: module-gateway
+  cloud:
+    config:
+      import-check:
+        enabled: false
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: module-user-management
+              uri: http://localhost:8081
+              predicates:
+                - Path=/actuator,/example
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

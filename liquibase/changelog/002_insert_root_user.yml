@@ -11,13 +11,13 @@ databaseChangeLog:
         - insert:
             tableName: users
             columns:
-              - column:  
+              - column:
                   name: id
                   valueComputed: "NEXTVAL('users_seq')"
               - column:
                   name: username
                   value: "root"
-              - column:  
+              - column:
                   name: user_role
                   value: "ROLE_ADMIN"
               - column:
