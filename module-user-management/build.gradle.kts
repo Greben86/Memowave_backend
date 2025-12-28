@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-
 plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
@@ -17,33 +13,42 @@ repositories {
     mavenCentral()
 }
 
+val jsonwebtokenVersion = "0.12.3"
+val openApiVersion = "2.8.14"
+val mapstructVersion = "1.6.3"
+val mockitoVersion = "5.14.0"
+val commonsLangVersion = "3.17.0"
+
 dependencies {
-    val jwtVersion = "0.12.3"
-    val mapStructVersion = "1.6.3"
     implementation(project(":module-core"))
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("io.jsonwebtoken:jjwt-api:${jwtVersion}")
-    implementation("io.jsonwebtoken:jjwt-impl:${jwtVersion}")
-    implementation("io.jsonwebtoken:jjwt-jackson:${jwtVersion}")
-    implementation("org.projectlombok:lombok:1.18.38")
-    implementation("org.mapstruct:mapstruct:${mapStructVersion}")
-    implementation("org.apache.commons:commons-lang3:3.17.0")
-    implementation("com.h2database:h2")
+    implementation(group = "io.jsonwebtoken", name = "jjwt-api", version = jsonwebtokenVersion)
+    implementation(group = "io.jsonwebtoken", name = "jjwt-impl", version = jsonwebtokenVersion)
+    implementation(group = "io.jsonwebtoken", name = "jjwt-jackson", version = jsonwebtokenVersion)
+    implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = openApiVersion)
+    implementation(group = "org.mapstruct", name = "mapstruct", version = mapstructVersion)
+    compileOnly(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
+    implementation(group = "org.projectlombok", name = "lombok", version = "1.18.38")
+    implementation("org.apache.commons:commons-lang3")
+    runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation(kotlin("test"))
 
-    annotationProcessor("org.mapstruct:mapstruct-processor:${mapStructVersion}")
+    annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.38")
+    annotationProcessor(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
 }
 
-//tasks.test {
-//    useJUnitPlatform()
-//}
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 kotlin {
     jvmToolchain(21)
 }

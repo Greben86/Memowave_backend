@@ -1,8 +1,8 @@
 package dev.greben.memowave.mapper
 
-import dev.greben.memowave.model.UserRequest
+import dev.greben.memowave.dto.SignUpRequest
 import dev.greben.memowave.entities.User
-import dev.greben.memowave.model.UserResponse
+import dev.greben.memowave.dto.UserResponse
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
@@ -16,7 +16,7 @@ import org.mapstruct.factory.Mappers
 interface UserMapper {
 
     @Mapping(target = "userRole", constant = "ROLE_USER")
-    fun dtoToEntity(dto: UserRequest): User
+    fun dtoToEntity(dto: SignUpRequest): User
 
     fun entityToDto(entity: User): UserResponse
 }

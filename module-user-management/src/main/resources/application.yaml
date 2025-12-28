@@ -6,8 +6,8 @@ spring:
     name: user-management-service
   datasource:
     url: "${DB_URL:jdbc:postgresql://localhost:5432/memowave_db}"
-    username: "${DB_USERNAME:admin}"
-    password: "${DB_PASSWORD:admin}"
+    username: "${DB_USERNAME:pgadmin}"
+    password: "${DB_PASSWORD:pgadmin}"
     driverClassName: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -31,4 +31,4 @@ security:
     signing:
       key: "${TOKEN_SECRET_KEY:53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855}"
     expiration:
-      milliseconds: "${TOKEN_DURING_LIVE:144000000}"
+      minutes: "${TOKEN_DURING_LIVE:5}"

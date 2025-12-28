@@ -14,15 +14,18 @@ import java.util.*
 import java.util.function.Function
 import javax.crypto.SecretKey
 
+/**
+ * Сервис для JWT
+ */
 @Service
 class JwtService(
     // Уникальный ключ для генерации токена
     @Value("\${security.token.signing.key}")
-    private val jwtSigningKey: String,
+    val jwtSigningKey: String,
 
     // Время жизни токена в миллисекундах
     @Value("\${security.token.expiration.minutes}")
-    private val jwtExpirationMinutes: Int
+    val jwtExpirationMinutes: Int
 ) {
 
     /**
@@ -43,8 +46,8 @@ class JwtService(
     fun generateToken(userDetails: UserDetails): String {
         val claims = HashMap<String?, Any?>()
         if (userDetails is User) {
-            claims.put(AUTH_CLAIMS_LOGIN, userDetails.getUsername())
-            claims.put(AUTH_CLAIMS_ROLE, userDetails.getUserRole())
+            claims[AUTH_CLAIMS_LOGIN] = userDetails.getUsername()
+            claims[AUTH_CLAIMS_ROLE] = userDetails.getUserRole()
         }
         return generateToken(claims, userDetails)
     }
@@ -52,23 +55,23 @@ class JwtService(
     /**
      * Проверка токена на валидность
      *
-     * @param token       токен
+     * @param token токен
      * @param userDetails данные пользователя
      * @return true, если токен валиден
      */
     fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
         val userName = extractUserName(token)
-        return userName == userDetails.getUsername() && !isTokenExpired(token)
+        return userName == userDetails.username && !isTokenExpired(token)
     }
 
     /**
      * Извлечение данных из токена
      *
-     * @param token           токен
+     * @param token токен
      * @param claimsResolvers функция извлечения данных
-     * @param <T>             тип данных
+     * @param <T> тип данных
      * @return данные
-    </T> */
+     */
     private fun <T> extractClaim(token: String?, claimsResolvers: Function<Claims, T>): T {
         val claims: Claims = extractAllClaims(token)
         return claimsResolvers.apply(claims)
@@ -85,7 +88,7 @@ class JwtService(
         val currentTime = Date(System.currentTimeMillis())
         return Jwts.builder()
             .claims().add(extraClaims).and()
-            .subject(userDetails.getUsername())
+            .subject(userDetails.username)
             .issuedAt(currentTime)
             .expiration(org.apache.commons.lang3.time.DateUtils.addMinutes(currentTime, jwtExpirationMinutes))
             .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -99,7 +102,7 @@ class JwtService(
      * @return true, если токен просрочен
      */
     private fun isTokenExpired(token: String?): Boolean =
-        extractExpiration(token)!!.before(Date())
+        extractExpiration(token).before(Date())
 
     /**
      * Извлечение даты истечения токена

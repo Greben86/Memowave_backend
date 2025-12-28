@@ -1,12 +1,12 @@
-package dev.greben.memowave.service
+package dev.greben.memowave.configuration
 
-import dev.greben.memowave.utils.Constants.AUTH_BEARER_PREFIX
-import dev.greben.memowave.utils.Constants.AUTH_HEADER_NAME
+import dev.greben.memowave.service.JwtService
+import dev.greben.memowave.service.UserService
+import dev.greben.memowave.utils.Constants
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.commons.lang3.StringUtils
-import org.springframework.lang.NonNull
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -25,19 +25,18 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         // Получаем токен из заголовка
-
-        val authHeader = request.getHeader(AUTH_HEADER_NAME)
-        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, AUTH_BEARER_PREFIX)) {
+        val authHeader = request.getHeader(Constants.AUTH_HEADER_NAME)
+        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, Constants.AUTH_BEARER_PREFIX)) {
             filterChain.doFilter(request, response)
             return
         }
 
         // Обрезаем префикс и получаем имя пользователя из токена
-        val jwt: String = authHeader.substring(AUTH_BEARER_PREFIX.length)
+        val jwt: String = authHeader.substring(Constants.AUTH_BEARER_PREFIX.length)
         val username: String = jwtService.extractUserName(jwt)
 
-        if (StringUtils.isNotEmpty(username as CharSequence?)
-            && SecurityContextHolder.getContext().getAuthentication() == null
+        if (StringUtils.isNotEmpty(username as CharSequence)
+            && SecurityContextHolder.getContext().authentication == null
         ) {
             val userDetails: UserDetails = userService.userDetailsService()
                     .loadUserByUsername(username)
@@ -49,11 +48,11 @@ class JwtAuthenticationFilter(
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
-                    userDetails.getAuthorities()
+                    userDetails.authorities
                 )
 
-                authToken.setDetails(authHeader)
-                context.setAuthentication(authToken)
+                authToken.details = authHeader
+                context.authentication = authToken
                 SecurityContextHolder.setContext(context)
             }
         }
