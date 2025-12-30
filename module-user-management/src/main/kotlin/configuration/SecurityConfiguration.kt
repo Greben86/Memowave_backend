@@ -50,7 +50,7 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь,
                 // * - 1 уровень вложенности,
                 // ** - любое количество уровней вложенности
-                .requestMatchers("/api/auth/key", "/api/auth/sign/*").permitAll()
+                .requestMatchers("/api/auth/sign/*").permitAll()
                 .requestMatchers("/h2-console", "/h2-console/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(

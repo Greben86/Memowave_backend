@@ -75,6 +75,59 @@ services:
       postgres:
         condition: service_healthy # Ensure DB is ready before Liquibase runs
 
+  userservice:
+    container_name: user-management-service
+    build:
+      dockerfile_inline: |
+        FROM gradle:jdk21
+        LABEL authors="viktor"
+        COPY . /app
+        WORKDIR /app
+        RUN gradle build
+        COPY /module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
+        EXPOSE 8080
+        USER 1000:1000
+        ENTRYPOINT ["java", "-jar", "app.jar"]
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/memowave_db
+      DB_USERNAME: pgadmin
+      DB_PASSWORD: pgadmin
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http:// user-management-service:8081/actuator/health" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+    networks:
+      - memowave-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  gateway:
+    container_name: module-gateway
+    build:
+      dockerfile_inline: |
+        FROM gradle:jdk21
+        LABEL authors="viktor"
+        COPY . /app
+        WORKDIR /app
+        RUN gradle build
+        COPY /module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
+        EXPOSE 8080
+        USER 1000:1000
+        ENTRYPOINT ["java", "-jar", "app.jar"]
+    depends_on:
+      userservice:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks:
+      - memowave-network
+
 volumes:
   database-data:
   pgadmin-data:

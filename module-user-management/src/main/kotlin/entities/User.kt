@@ -35,6 +35,10 @@ data class User(
 
     override fun getUsername(): String? = username
 
+    fun setUsername(username: String?) {
+        this.username = username
+    }
+
     override fun getPassword(): String? = passwordHash
 
     fun getUserRole(): String? = userRole
@@ -45,7 +49,15 @@ data class User(
 
     fun getImageUrl(): String? = imageUrl
 
+    fun setImageUrl(imageUrl: String?) {
+        this.imageUrl = imageUrl
+    }
+
     fun getEmail(): String? = email
+
+    fun setEmail(email: String?) {
+        this.email = email
+    }
 
     override fun getAuthorities(): Collection<GrantedAuthority> =
         listOf<GrantedAuthority>(SimpleGrantedAuthority(userRole))

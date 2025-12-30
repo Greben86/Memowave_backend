@@ -12,9 +12,9 @@ spring:
         webflux:
           routes:
             - id: module-user-management
-              uri: http://localhost:8081
+              uri: http://localhost:8080
               predicates:
-                - Path=/actuator,/example
+                - Path=/actuator,/api/auth/sign/*
     discovery:
       locator:
         enabled: true
