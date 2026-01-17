@@ -47,8 +47,8 @@ class SecurityConfiguration(
             }
         // Настройка доступа к конечным точкам
         http.authorizeHttpRequests { it
-                // Можно указать конкретный путь,
-                // * - 1 уровень вложенности,
+                // Можно указать конкретный путь
+                // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
                 .requestMatchers("/api/auth/sign/*").permitAll()
                 .requestMatchers("/h2-console", "/h2-console/**").permitAll()

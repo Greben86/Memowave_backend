@@ -2,6 +2,7 @@ package dev.greben.memowave.rest
 
 import dev.greben.memowave.dto.UserResponse
 import dev.greben.memowave.service.UserService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -28,6 +29,9 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService
 ) {
+    companion object {
+        val log = KotlinLogging.logger {}
+    }
 
     @Operation(summary = "Редактирование пользователя")
     @ResponseStatus(HttpStatus.OK)
@@ -39,7 +43,7 @@ class UserController(
 
     @PreAuthorize("hasRole('ADMIN')")
     fun editUser(@RequestBody @Valid dto: UserResponse?): UserResponse? {
-//        log.info("Редактирование пользователя")
+        log.info { "Редактирование пользователя" }
         return userService.saveUser(dto)
     }
 
@@ -48,7 +52,7 @@ class UserController(
     @GetMapping(value = ["", "/"], produces = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasRole('ADMIN')")
     fun getUsers(): List<UserResponse> {
-//        log.info("Список всех пользователей, кроме администраторов")
+        log.info { "Список всех пользователей, кроме администраторов" }
         return userService.getAllUsers()
     }
 
@@ -57,7 +61,7 @@ class UserController(
     @DeleteMapping(value = ["/user/{id}"])
     @PreAuthorize("hasRole('ADMIN')")
     fun deleteUser(@PathVariable("id") id: Long): ResponseEntity<Nothing> {
-//        log.info("Удаление пользователя")
+        log.info { "Удаление пользователя" }
         if (userService.getById(id) != null) {
             userService.deleteUser(id)
             return ResponseEntity.noContent().build()
@@ -70,7 +74,7 @@ class UserController(
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
     fun getAdmin(@PathVariable("id") id: Long): ResponseEntity<Void> {
-//        log.info("Добавление роли ADMIN пользователю")
+        log.info { "Добавление роли ADMIN пользователю" }
         userService.setAdmin(id)
         return ResponseEntity.ok().build()
     }
@@ -80,7 +84,7 @@ class UserController(
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     fun getById(@PathVariable id: Long): UserResponse? {
-//        log.info("Информация о пользователе")
+        log.info { "Информация о пользователе" }
         return userService.getById(id)
     }
 }

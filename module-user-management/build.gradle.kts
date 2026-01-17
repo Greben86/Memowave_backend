@@ -18,6 +18,7 @@ val openApiVersion = "2.8.14"
 val mapstructVersion = "1.6.3"
 val mockitoVersion = "5.14.0"
 val commonsLangVersion = "3.17.0"
+val loggingVersion = "7.0.3"
 
 dependencies {
     implementation(project(":module-core"))
@@ -38,6 +39,7 @@ dependencies {
     implementation(group = "org.projectlombok", name = "lombok", version = "1.18.38")
     implementation("org.apache.commons:commons-lang3")
     runtimeOnly("org.postgresql:postgresql")
+    implementation(group = "io.github.oshai", name = "kotlin-logging-jvm", version = loggingVersion)
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation(kotlin("test"))
 
