@@ -78,18 +78,39 @@ services:
   userservice:
     container_name: user-management-service
     build:
-      dockerfile_inline: |
-        FROM gradle:jdk21
-        LABEL authors="viktor"
-        COPY . /app
-        WORKDIR /app
-        RUN gradle build
-        COPY /module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
-        EXPOSE 8081
-        USER 1000:1000
-        ENTRYPOINT ["java", "-jar", "app.jar"]
-#        ENTRYPOINT ["ls", "-lah"]
+      dockerfile: userservice.Dockerfile
+#      dockerfile_inline: |
+#        # Родительский образ контейнера с gradle внутри
+#        FROM gradle:jdk21 AS build
+#        LABEL authors="viktor"
+#        COPY . /app
+#        WORKDIR /app
+#        RUN gradle clean build
+#
+#        # Родительский образ контейнера с java внутри
+#        FROM eclipse-temurin:21-jre-alpine-3.22 AS run
+#        LABEL authors="viktor"
+#        RUN mkdir /app
+#        WORKDIR /app
+#        # Копирование jar-файла в контейнер
+#        COPY --from=build /app/module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
+#        RUN apk add --no-cache curl
+#        # Открытие порта 8081
+#        EXPOSE 8081
+#        USER 1000:1000
+#        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
+#        ENTRYPOINT ["java", "-jar", "/app.jar"]
+#        FROM gradle:jdk21
+#        LABEL authors="viktor"
+#        COPY . /app
+#        WORKDIR /app
+#        RUN gradle clean build
+#        COPY /module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
+#        EXPOSE 8081
+#        USER 1000:1000
+#        ENTRYPOINT ["java", "-jar", "app.jar"]
 #        ENTRYPOINT ["ls", "-lah", "module-user-management/build/libs"]
+#        ENTRYPOINT ["ls", "-lah"]
     environment:
       SERVICE_PORT: 8081
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
@@ -110,28 +131,30 @@ services:
       postgres:
         condition: service_healthy
 
-  gateway:
-    container_name: module-gateway
-    build:
-      dockerfile_inline: |
-        FROM gradle:jdk21
-        LABEL authors="viktor"
-        COPY . /app
-        WORKDIR /app
-        RUN gradle build
-        COPY /module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
-        EXPOSE 8080
-        USER 1000:1000
-        ENTRYPOINT ["java", "-jar", "app.jar"]
-    depends_on:
-      userservice:
-        condition: service_started
-    environment:
-      SERVICE_PORT: 8080
-    ports:
-      - "8080:8080"
-    networks:
-      - memowave-network
+#  gateway:
+#    container_name: module-gateway
+#    build:
+#      dockerfile: gateway.Dockerfile
+##      dockerfile_inline: |
+##        FROM gradle:jdk21
+##        LABEL authors="viktor"
+##        COPY . /app
+##        WORKDIR /app
+##        RUN gradle clean build
+##        COPY /module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
+##        EXPOSE 8080
+##        USER 1000:1000
+##        ENTRYPOINT ["java", "-jar", "app.jar"]
+#    depends_on:
+#      userservice:
+#        condition: service_started
+#    environment:
+#      SERVICE_PORT: 8080
+#      USER_MANAGEMENT_URL: "http://user-management-service:8081"
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - memowave-network
 
 volumes:
   database-data:

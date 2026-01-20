@@ -10,6 +10,7 @@ group = "dev.greben.memowave"
 version = "0.0.1-SNAPSHOT"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -24,7 +25,7 @@ kotlin {
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-gateway:4.3.0")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux:4.3.0")
-//    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j:4.3.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j:3.3.0")
     implementation("org.springframework.cloud:spring-cloud-gateway-server-webflux:4.3.0")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
