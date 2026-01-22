@@ -78,7 +78,7 @@ services:
   userservice:
     container_name: user-management-service
     build:
-      dockerfile: userservice.Dockerfile
+      dockerfile: module-user-management/Dockerfile
 #      dockerfile_inline: |
 #        # Родительский образ контейнера с gradle внутри
 #        FROM gradle:jdk21 AS build
