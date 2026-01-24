@@ -51,7 +51,6 @@ class SecurityConfiguration(
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
                 .requestMatchers("/api/auth/sign/*").permitAll()
-                .requestMatchers("/h2-console", "/h2-console/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(
                     "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**", "/module-booking/**").permitAll()

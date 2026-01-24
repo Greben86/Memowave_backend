@@ -81,11 +81,11 @@ services:
       dockerfile: module-user-management/Dockerfile
 #      dockerfile_inline: |
 #        # Родительский образ контейнера с gradle внутри
-#        FROM gradle:jdk21 AS build
+#        FROM gradle:jdk21-alpine AS build
 #        LABEL authors="viktor"
 #        COPY . /app
 #        WORKDIR /app
-#        RUN gradle clean build
+#        RUN gradle clean build --no-daemon
 #
 #        # Родительский образ контейнера с java внутри
 #        FROM eclipse-temurin:21-jre-alpine-3.22 AS run
@@ -100,17 +100,6 @@ services:
 #        USER 1000:1000
 #        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
 #        ENTRYPOINT ["java", "-jar", "/app.jar"]
-#        FROM gradle:jdk21
-#        LABEL authors="viktor"
-#        COPY . /app
-#        WORKDIR /app
-#        RUN gradle clean build
-#        COPY /module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
-#        EXPOSE 8081
-#        USER 1000:1000
-#        ENTRYPOINT ["java", "-jar", "app.jar"]
-#        ENTRYPOINT ["ls", "-lah", "module-user-management/build/libs"]
-#        ENTRYPOINT ["ls", "-lah"]
     environment:
       SERVICE_PORT: 8081
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
@@ -131,30 +120,48 @@ services:
       postgres:
         condition: service_healthy
 
-#  gateway:
-#    container_name: module-gateway
-#    build:
-#      dockerfile: gateway.Dockerfile
-##      dockerfile_inline: |
-##        FROM gradle:jdk21
-##        LABEL authors="viktor"
-##        COPY . /app
-##        WORKDIR /app
-##        RUN gradle clean build
-##        COPY /module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar app.jar
-##        EXPOSE 8080
-##        USER 1000:1000
-##        ENTRYPOINT ["java", "-jar", "app.jar"]
-#    depends_on:
-#      userservice:
-#        condition: service_started
-#    environment:
-#      SERVICE_PORT: 8080
-#      USER_MANAGEMENT_URL: "http://user-management-service:8081"
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - memowave-network
+  gateway:
+    container_name: gateway-service
+    build:
+      dockerfile: module-gateway/Dockerfile
+#      dockerfile_inline: |
+#        # Родительский образ контейнера с gradle внутри
+#        FROM gradle:jdk21-alpine AS build
+#        LABEL authors="viktor"
+#        COPY . /app
+#        WORKDIR /app
+#        RUN gradle clean build --no-daemon
+#
+#        # Родительский образ контейнера с java внутри
+#        FROM eclipse-temurin:21-jre-alpine-3.22 AS run
+#        LABEL authors="viktor"
+#        RUN mkdir /app
+#        WORKDIR /app
+#        # Копирование jar-файла в контейнер
+#        COPY --from=build /app/module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
+#        RUN apk add --no-cache curl
+#        # Открытие порта 8080
+#        EXPOSE 8080
+#        USER 1000:1000
+#        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
+#        ENTRYPOINT ["java", "-jar", "/app.jar"]
+    depends_on:
+      userservice:
+        condition: service_healthy
+    environment:
+      SERVICE_PORT: 8080
+      USER_MANAGEMENT_URL: "http://user-management-service:8081"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://gateway-service:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - memowave-network
 
 volumes:
   database-data:
