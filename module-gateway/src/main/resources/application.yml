@@ -14,7 +14,7 @@ spring:
             - id: user-management-service
               uri: ${USER_MANAGEMENT_URL}
               predicates:
-                - Path=/actuator/*,/api/auth/sign/*
+                - Path=/user-management-service/**,/api/users/**,/api/auth/sign/*
     discovery:
       locator:
         enabled: true
@@ -25,3 +25,9 @@ management:
     web:
       exposure:
         include: "*"
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: user-management-service
+        url: /user-management-service/v3/api-docs

@@ -53,7 +53,7 @@ class SecurityConfiguration(
                 .requestMatchers("/api/auth/sign/*").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(
-                    "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**", "/module-booking/**").permitAll()
+                    "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**", "/user-management-service/**").permitAll()
                 .anyRequest().authenticated()
         }
         http.sessionManagement {
