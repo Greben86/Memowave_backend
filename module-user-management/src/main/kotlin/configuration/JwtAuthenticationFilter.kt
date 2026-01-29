@@ -26,7 +26,8 @@ class JwtAuthenticationFilter(
     ) {
         // Получаем токен из заголовка
         val authHeader = request.getHeader(Constants.AUTH_HEADER_NAME)
-        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, Constants.AUTH_BEARER_PREFIX)) {
+        if (StringUtils.isEmpty(authHeader)
+            || !StringUtils.startsWith(authHeader, Constants.AUTH_BEARER_PREFIX)) {
             filterChain.doFilter(request, response)
             return
         }

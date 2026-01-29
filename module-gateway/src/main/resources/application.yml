@@ -14,7 +14,7 @@ spring:
             - id: user-management-service
               uri: ${USER_MANAGEMENT_URL}
               predicates:
-                - Path=/user-management-service/**,/api/users/**,/api/auth/sign/*
+                - Path=/user-management-service/**,/api/users/**,/api/auth/*
     discovery:
       locator:
         enabled: true

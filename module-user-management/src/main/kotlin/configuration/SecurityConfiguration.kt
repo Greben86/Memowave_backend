@@ -50,10 +50,9 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
-                .requestMatchers("/api/auth/sign/*").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers(
-                    "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**", "/user-management-service/**").permitAll()
+                .requestMatchers("/api/auth/*").permitAll()
+                .requestMatchers("/actuator/*").permitAll()
+                .requestMatchers("/user-management-service/**").permitAll()
                 .anyRequest().authenticated()
         }
         http.sessionManagement {

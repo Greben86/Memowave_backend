@@ -13,7 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("api/auth/sign")
+@RequestMapping("api/auth")
 @Tag(name = "REST API: Аутентификация")
 class AuthController(
     private val authenticationService: AuthenticationService
@@ -25,7 +25,7 @@ class AuthController(
     @Operation(summary = "Регистрация пользователя")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(
-        value = ["/up"],
+        value = ["/register"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -37,7 +37,7 @@ class AuthController(
     @Operation(summary = "Авторизация пользователя")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(
-        value = ["/in"],
+        value = ["/login"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
