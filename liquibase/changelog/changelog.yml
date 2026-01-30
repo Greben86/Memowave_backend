@@ -10,3 +10,15 @@ databaseChangeLog:
   - include:
       file: 002_insert_root_user.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 003_create_table_packs.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 004_create_table_categories.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 005_create_table_words.yml
+      relativeToChangelogFile: true
