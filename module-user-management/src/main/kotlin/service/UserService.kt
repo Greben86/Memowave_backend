@@ -3,6 +3,7 @@ package dev.greben.memowave.service
 import dev.greben.memowave.dto.SignUpRequest
 import dev.greben.memowave.dto.UserResponse
 import dev.greben.memowave.entities.User
+import dev.greben.memowave.mapper.UserMapper
 import dev.greben.memowave.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -16,17 +17,13 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class UserService(
-    var repository: UserRepository
+    var repository: UserRepository,
+    var mapper: UserMapper
 ) {
 
     fun getById(id: Long): UserResponse? {
         return repository.findById(id)
-            .map { UserResponse(
-                id = it.id,
-                username = it.username,
-                imageUrl = it.getImageUrl(),
-                email = it.getEmail())
-            }
+            .map { mapper.toDto(it) }
             .orElseGet { null }
     }
 
@@ -37,7 +34,7 @@ class UserService(
      */
     fun getAllUsers(): List<UserResponse> {
         return repository.findByUserRoleNot("ROLE_ADMIN").stream()
-            .map { UserResponse(id = it.id, username = it.username, imageUrl = it.getImageUrl(), email = it.getEmail()) }
+            .map { mapper.toDto(it) }
             .toList()
     }
 
@@ -66,12 +63,7 @@ class UserService(
             "Такой пользователь с логином '${user.username}' уже есть"
         }
 
-        val entity = User(
-            username = user.username,
-            userRole = "ROLE_USER",
-            passwordHash = encodedPassword,
-            imageUrl = user.imageUrl,
-            email = user.email)
+        val entity = mapper.fromDto(user, encodedPassword)
         return repository.save(entity)
     }
 
@@ -88,11 +80,7 @@ class UserService(
         user?.setEmail(request.email)
         if (user != null) {
             repository.save(user)
-            return UserResponse(
-                id = user.id,
-                username = user.username,
-                imageUrl = user.getImageUrl(),
-                email = user.getEmail())
+            return mapper.toDto(user)
         }
 
         return null

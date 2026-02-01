@@ -7,7 +7,6 @@ import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
 import org.mapstruct.ReportingPolicy
-import org.mapstruct.factory.Mappers
 
 @Mapper(
     componentModel = MappingConstants.ComponentModel.SPRING,
@@ -16,12 +15,8 @@ import org.mapstruct.factory.Mappers
 interface UserMapper {
 
     @Mapping(target = "userRole", constant = "ROLE_USER")
-    fun dtoToEntity(dto: SignUpRequest): User
+    @Mapping(target = "password", source = "encodedPassword")
+    fun fromDto(dto: SignUpRequest, encodedPassword: String): User
 
-    fun entityToDto(entity: User): UserResponse
-}
-
-object MappersFactory {
-    @JvmStatic
-    fun userMapper(): UserMapper = Mappers.getMapper(UserMapper::class.java)
+    fun toDto(entity: User): UserResponse
 }

@@ -41,6 +41,10 @@ data class User(
 
     override fun getPassword(): String? = passwordHash
 
+    fun setPassword(password: String?) {
+        this.passwordHash = password
+    }
+
     fun getUserRole(): String? = userRole
 
     fun setUserRole(userRole: String) {

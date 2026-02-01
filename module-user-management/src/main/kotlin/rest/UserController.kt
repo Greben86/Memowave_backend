@@ -6,8 +6,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import lombok.RequiredArgsConstructor
-import lombok.extern.slf4j.Slf4j
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -21,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-@Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("api/users")
 @Tag(name = "REST API: Пользователь")
@@ -36,11 +32,10 @@ class UserController(
     @Operation(summary = "Редактирование пользователя")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(
-        value = ["/user/edit"],
+        value = ["/edit/user", "/edit/user/"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-
     @PreAuthorize("hasRole('ADMIN')")
     fun editUser(@RequestBody @Valid dto: UserResponse?): UserResponse? {
         log.info { "Редактирование пользователя" }
@@ -58,7 +53,7 @@ class UserController(
 
     @Operation(summary = "Удаление пользователя")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = ["/user/{id}"])
+    @DeleteMapping(value = ["/{id}/user", "/{id}/user/"])
     @PreAuthorize("hasRole('ADMIN')")
     fun deleteUser(@PathVariable("id") id: Long): ResponseEntity<Nothing> {
         log.info { "Удаление пользователя" }
@@ -69,18 +64,18 @@ class UserController(
         return ResponseEntity.notFound().build()
     }
 
-    @PutMapping("/user/{id}/set-admin")
+    @PutMapping(value = ["/{id}/user/set-admin", "/{id}/user/set-admin/"])
     @Operation(summary = "Добавить роль ADMIN пользователю")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
-    fun getAdmin(@PathVariable("id") id: Long): ResponseEntity<Void> {
+    fun setAdmin(@PathVariable("id") id: Long): ResponseEntity<Void> {
         log.info { "Добавление роли ADMIN пользователю" }
         userService.setAdmin(id)
         return ResponseEntity.ok().build()
     }
 
     @Operation(summary = "Информация о пользователе")
-    @GetMapping("/user/{id}")
+    @GetMapping(value = ["/{id}/user", "/{id}/user/"])
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     fun getById(@PathVariable id: Long): UserResponse? {

@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
+    kotlin("kapt") version "1.9.22"
 }
 
 group = "dev.greben.memowave"
@@ -35,16 +36,10 @@ dependencies {
     implementation(group = "io.jsonwebtoken", name = "jjwt-jackson", version = jsonwebtokenVersion)
     implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = openApiVersion)
     implementation(group = "org.mapstruct", name = "mapstruct", version = mapstructVersion)
-    compileOnly(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
-    implementation(group = "org.projectlombok", name = "lombok", version = "1.18.38")
+    kapt(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
     implementation("org.apache.commons:commons-lang3")
     runtimeOnly("org.postgresql:postgresql")
     implementation(group = "io.github.oshai", name = "kotlin-logging-jvm", version = loggingVersion)
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
-    testImplementation(kotlin("test"))
-
-    annotationProcessor(group = "org.projectlombok", name = "lombok", version = "1.18.38")
-    annotationProcessor(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
 }
 
 tasks.withType<Test> {

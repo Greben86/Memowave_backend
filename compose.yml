@@ -46,34 +46,34 @@ services:
       postgres:
         condition: service_healthy # Ensure DB is ready before Liquibase runs
 
-#  pgadmin:
-#    container_name: memowave_pgadmin_container
-#    image: dpage/pgadmin4:latest
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
-#      PGADMIN_DEFAULT_PASSWORD: "admin"
-#      PGADMIN_CONFIG_SERVER_MODE: "False"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1" ]
-#      interval: 10s
-#      timeout: 5s
-#      start_period: 10s
-#      retries: 5
-#    volumes:
-#      - pgadmin-data:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
-#    restart: unless-stopped
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.5'
-#          memory: 1G
-#    networks:
-#      - memowave-network
-#    depends_on:
-#      postgres:
-#        condition: service_healthy # Ensure DB is ready before Liquibase runs
+  pgadmin:
+    container_name: memowave_pgadmin_container
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1" ]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - memowave-network
+    depends_on:
+      postgres:
+        condition: service_healthy # Ensure DB is ready before Liquibase runs
 
   userservice:
     container_name: user-management-service
