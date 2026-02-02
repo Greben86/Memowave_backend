@@ -1,0 +1,59 @@
+package dev.greben.memowave.configuration
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+class SecurityConfiguration(
+    private var jwtAuthenticationFilter: JwtAuthenticationFilter,
+) {
+
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain? {
+        http.csrf { it.disable() }
+        // Своего рода отключение CORS (разрешение запросов со всех доменов)
+        http.cors { it.configurationSource {
+                    val corsConfiguration = CorsConfiguration()
+                    corsConfiguration.allowedOriginPatterns = mutableListOf("*")
+                    corsConfiguration.allowedMethods = mutableListOf(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
+                    )
+                    corsConfiguration.allowedHeaders = mutableListOf("*")
+                    corsConfiguration.allowCredentials = true
+                    corsConfiguration
+                }
+            }
+        // Настройка доступа к конечным точкам
+        http.authorizeHttpRequests { it
+                // Можно указать конкретный путь
+                // * - 1 уровень вложенности
+                // ** - любое количество уровней вложенности
+                .requestMatchers("/actuator/*").permitAll()
+                .requestMatchers("/exercise-service/**").permitAll()
+                .anyRequest().authenticated()
+        }
+        http.sessionManagement {
+            it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        }
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+        http.headers {
+            it.frameOptions(Customizer.withDefaults()).disable()
+        }
+
+        return http.build()
+    }
+}
