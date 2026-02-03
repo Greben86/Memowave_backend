@@ -25,7 +25,7 @@ data class User(
     private var userRole: String?,
     @Column(name = "password_hash", nullable = false)
     private var passwordHash: String?,
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = true)
     private var imageUrl: String?,
     @Column(name = "email", nullable = false)
     private var email: String?,

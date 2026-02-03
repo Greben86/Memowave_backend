@@ -1,15 +1,19 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.entities.User
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_EMAIL
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
-import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
-import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
 import io.jsonwebtoken.security.Keys
+import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.*
 import java.util.function.Function
 import javax.crypto.SecretKey
@@ -46,8 +50,10 @@ class JwtService(
     fun generateToken(userDetails: UserDetails): String {
         val claims = HashMap<String?, Any?>()
         if (userDetails is User) {
+            claims[AUTH_CLAIMS_USER_ID] = userDetails.id
             claims[AUTH_CLAIMS_LOGIN] = userDetails.getUsername()
             claims[AUTH_CLAIMS_ROLE] = userDetails.getUserRole()
+            claims[AUTH_CLAIMS_EMAIL] = userDetails.getEmail()
         }
         return generateToken(claims, userDetails)
     }
@@ -90,7 +96,7 @@ class JwtService(
             .claims().add(extraClaims).and()
             .subject(userDetails.username)
             .issuedAt(currentTime)
-            .expiration(org.apache.commons.lang3.time.DateUtils.addMinutes(currentTime, jwtExpirationMinutes))
+            .expiration(DateUtils.addMinutes(currentTime, jwtExpirationMinutes))
             .signWith(getSigningKey(), Jwts.SIG.HS256)
             .compact()
     }

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.greben.memowave"
-version = "unspecified"
+version = "0.0.1-SNAPSHOT"
 
 repositories {
     mavenLocal()
