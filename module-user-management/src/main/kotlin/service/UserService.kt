@@ -21,6 +21,11 @@ class UserService(
     var mapper: UserMapper
 ) {
 
+    /**
+     * Получить пользователя по идентификатору
+     *
+     * @return информация о пользователе
+     */
     fun getById(id: Long): UserResponse? {
         return repository.findById(id)
             .map { mapper.toDto(it) }
@@ -120,7 +125,7 @@ class UserService(
      *
      * @return текущий пользователь
      */
-    fun getCurrentUser(): User? {
+    private fun getCurrentUser(): User? {
         // Получение имени пользователя из контекста Spring Security
         val username = SecurityContextHolder
             .getContext()
@@ -128,5 +133,17 @@ class UserService(
             .name
 
         return getByUsername(username)
+    }
+
+    /**
+     * Получение текущего пользователя
+     *
+     * @return текущий пользователь
+     */
+    fun currentUser(): UserResponse? {
+        // Получение имени пользователя из контекста Spring Security
+        val user = getCurrentUser() ?: return null
+
+        return mapper.toDto(user)
     }
 }

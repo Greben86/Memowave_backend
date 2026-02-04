@@ -50,10 +50,11 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
-                .requestMatchers("/api/auth/*").permitAll()
-                .requestMatchers("/actuator/*").permitAll()
-                .requestMatchers("/user-management-service/**").permitAll()
-                .anyRequest().authenticated()
+//                .requestMatchers("/api/auth/*").permitAll()
+//                .requestMatchers("/actuator/*").permitAll()
+//                .requestMatchers("/user-management-service/**").permitAll()
+                .requestMatchers("api/users").authenticated()
+                .anyRequest().permitAll()
         }
         http.sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

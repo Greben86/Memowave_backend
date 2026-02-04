@@ -32,7 +32,7 @@ class UserController(
     @Operation(summary = "Редактирование пользователя")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(
-        value = ["/edit/user", "/edit/user/"],
+        value = ["/edit/user"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -44,7 +44,7 @@ class UserController(
 
     @Operation(summary = "Список всех пользователей, кроме администраторов")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = ["", "/"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping(value = [""], produces = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasRole('ADMIN')")
     fun getUsers(): List<UserResponse> {
         log.info { "Список всех пользователей, кроме администраторов" }
@@ -53,7 +53,7 @@ class UserController(
 
     @Operation(summary = "Удаление пользователя")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = ["/{id}/user", "/{id}/user/"])
+    @DeleteMapping(value = ["/{id}/user"])
     @PreAuthorize("hasRole('ADMIN')")
     fun deleteUser(@PathVariable("id") id: Long): ResponseEntity<Nothing> {
         log.info { "Удаление пользователя" }
@@ -64,7 +64,7 @@ class UserController(
         return ResponseEntity.notFound().build()
     }
 
-    @PutMapping(value = ["/{id}/user/set-admin", "/{id}/user/set-admin/"])
+    @PutMapping(value = ["/{id}/user/set-admin"])
     @Operation(summary = "Добавить роль ADMIN пользователю")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
@@ -74,8 +74,21 @@ class UserController(
         return ResponseEntity.ok().build()
     }
 
+    @Operation(summary = "Информация о текущем пользователе")
+    @GetMapping(value = ["/user/current"])
+    @ResponseStatus(HttpStatus.OK)
+    fun getCurrentUser(): ResponseEntity<UserResponse?> {
+        log.info { "Информация о текущем пользователе" }
+        val response = userService.currentUser()
+        return if (response == null) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        } else {
+            ResponseEntity.ok(response)
+        }
+    }
+
     @Operation(summary = "Информация о пользователе")
-    @GetMapping(value = ["/{id}/user", "/{id}/user/"])
+    @GetMapping(value = ["/{id}/user"])
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     fun getById(@PathVariable id: Long): UserResponse? {
