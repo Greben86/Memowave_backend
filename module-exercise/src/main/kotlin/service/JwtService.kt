@@ -40,7 +40,7 @@ class JwtService(
      */
     fun extractUserRole(token: String): GrantedAuthority =
         SimpleGrantedAuthority(extractClaim(token) {
-            String(it[AUTH_CLAIMS_ROLE] as CharArray)
+            it[AUTH_CLAIMS_ROLE].toString()
         })
 
     /**

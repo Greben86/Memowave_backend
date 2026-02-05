@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface WordRepository : JpaRepository<Word, Long> {
+
+    fun findByCategoryId(categoryId: Long): Word?
 }

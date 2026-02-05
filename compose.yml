@@ -64,11 +64,11 @@ services:
     ports:
       - "5050:80"
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 1G
     networks:
       - memowave-network
     depends_on:
@@ -97,13 +97,48 @@ services:
       DB_PASSWORD: pgadmin
     ports:
       - "8081:8081"
-#    restart: unless-stopped
+    restart: unless-stopped
 #    healthcheck:
 #      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
 #      interval: 10s
 #      timeout: 5s
 #      retries: 5
 #      start_period: 10s
+    networks:
+      - memowave-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  wordservice:
+    container_name: exercise-service
+    build:
+      dockerfile_inline: |
+        # Родительский образ контейнера с java внутри
+        FROM eclipse-temurin:21-jre-alpine
+        RUN mkdir /app
+        WORKDIR /app
+        # Копирование jar-файла в контейнер
+        COPY module-exercise/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
+        # Открытие порта 8082
+        EXPOSE 8082
+        USER 1000:1000
+        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
+        ENTRYPOINT ["java", "-jar", "/app.jar"]
+    environment:
+      SERVICE_PORT: 8082
+      DB_URL: jdbc:postgresql://postgres:5432/memowave_db
+      DB_USERNAME: pgadmin
+      DB_PASSWORD: pgadmin
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+    #    healthcheck:
+    #      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
+    #      interval: 10s
+    #      timeout: 5s
+    #      retries: 5
+    #      start_period: 10s
     networks:
       - memowave-network
     depends_on:
@@ -125,15 +160,18 @@ services:
         USER 1000:1000
         # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
         ENTRYPOINT ["java", "-jar", "/app.jar"]
-#    depends_on:
-#      userservice:
-#        condition: service_healthy
+    depends_on:
+      userservice:
+        condition: service_started
+      wordservice:
+        condition: service_started
     environment:
       SERVICE_PORT: 8080
       USER_MANAGEMENT_URL: "http://user-management-service:8081"
+      EXERCISE_URL: "http://exercise-service:8082"
     ports:
       - "8080:8080"
-#    restart: unless-stopped
+    restart: unless-stopped
 #    healthcheck:
 #      test: [ "CMD", "curl", "-f", "http://gateway-service:8080/actuator/health" ]
 #      interval: 10s

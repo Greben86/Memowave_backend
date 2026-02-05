@@ -15,6 +15,10 @@ spring:
               uri: ${USER_MANAGEMENT_URL}
               predicates:
                 - Path=/user-management-service/**,/api/users/**,/api/auth/*
+            - id: exercise-service
+              uri: ${EXERCISE_URL}
+              predicates:
+                - Path=/exercise-service/**,/api/words/**
     discovery:
       locator:
         enabled: true
@@ -31,3 +35,5 @@ springdoc:
     urls:
       - name: user-management-service
         url: /user-management-service/v3/api-docs
+      - name: exercise-service
+        url: /exercise-service/v3/api-docs

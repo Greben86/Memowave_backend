@@ -42,9 +42,8 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
-                .requestMatchers("/actuator/*").permitAll()
-                .requestMatchers("/exercise-service/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("api/words").authenticated()
+                .anyRequest().permitAll()
         }
         http.sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

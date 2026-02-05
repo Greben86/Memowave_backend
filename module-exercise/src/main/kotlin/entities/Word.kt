@@ -16,6 +16,8 @@ class Word(
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "words_generator")
     @SequenceGenerator(name = "words_generator", sequenceName = "words_seq", allocationSize = 1)
     var id: Long = 0L,
+    @Column(name = "category_id", nullable = false)
+    private var categoryId: Long?,
     @Column(name = "text", nullable = false)
     private var text: String?,
     @Column(name = "translate", nullable = false)
@@ -25,5 +27,5 @@ class Word(
     @Column(name = "image_url", nullable = true)
     private var imageUrl: String?
 ) : AbstractEntity() {
-
+    constructor(): this(categoryId = null, text = null, translate = null, example = null, imageUrl = null)
 }

@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class UserService(
-    var repository: UserRepository,
-    var mapper: UserMapper
+    private val repository: UserRepository,
+    private val mapper: UserMapper
 ) {
 
     /**
