@@ -5,17 +5,22 @@ import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_EMAIL
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.impl.DefaultClaims
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.function.Function
 import javax.crypto.SecretKey
+import kotlin.collections.mapOf
 
 /**
  * Сервис для JWT
@@ -30,6 +35,9 @@ class JwtService(
     @Value("\${security.token.expiration.minutes}")
     val jwtExpirationMinutes: Int
 ) {
+    companion object {
+        val log = KotlinLogging.logger {}
+    }
 
     /**
      * Извлечение имени пользователя из токена
@@ -41,6 +49,15 @@ class JwtService(
         extractClaim<String>(token, Claims::getSubject)
 
     /**
+     * Извлечение email пользователя из токена
+     *
+     * @param token токен
+     * @return роль пользователя
+     */
+    fun extractUserEmail(email: String): String =
+        extractClaim(email) { it[AUTH_CLAIMS_EMAIL].toString() }
+
+    /**
      * Генерация токена
      *
      * @param userDetails данные пользователя
@@ -50,9 +67,9 @@ class JwtService(
         val claims = HashMap<String?, Any?>()
         if (userDetails is User) {
             claims[AUTH_CLAIMS_USER_ID] = userDetails.id
-            claims[AUTH_CLAIMS_LOGIN] = userDetails.getUsername()
-            claims[AUTH_CLAIMS_ROLE] = userDetails.getUserRole()
-            claims[AUTH_CLAIMS_EMAIL] = userDetails.getEmail()
+            claims[AUTH_CLAIMS_LOGIN] = userDetails.username
+            claims[AUTH_CLAIMS_ROLE] = userDetails.userRole
+            claims[AUTH_CLAIMS_EMAIL] = userDetails.email
         }
         return generateToken(claims, userDetails)
     }
@@ -125,11 +142,16 @@ class JwtService(
      * @return данные
      */
     private fun extractAllClaims(token: String?): Claims {
-        return Jwts.parser()
-            .verifyWith(getSigningKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
+        try {
+            return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+        } catch (ex: Exception) {
+            log.error(ex) { ex.message }
+            return DefaultClaims(mapOf<String, Any>())
+        }
     }
 
     /**

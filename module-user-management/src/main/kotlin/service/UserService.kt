@@ -52,7 +52,7 @@ class UserService(
     fun setAdmin(id: Long) {
         val user = repository.findById(id)
             .orElseThrow { IllegalArgumentException("Пользователь не найден") }
-        user.setUserRole("ROLE_ADMIN")
+        user.userRole = "ROLE_ADMIN"
         repository.save(user)
     }
 
@@ -80,9 +80,9 @@ class UserService(
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun saveUser(request: UserResponse?): UserResponse? {
         val user: User? = getByUsername(request!!.username!!)
-        user?.setUsername(request.username)
-        user?.setImageUrl(request.imageUrl)
-        user?.setEmail(request.email)
+        user?.username = request.username
+        user?.imageUrl = request.imageUrl
+        user?.email = request.email
         if (user != null) {
             repository.save(user)
             return mapper.toDto(user)
@@ -112,13 +112,30 @@ class UserService(
         repository.findByUsername(username)
 
     /**
+     * Получение пользователя по email пользователя
+     *
+     * @return пользователь
+     */
+    fun getByEmail(email: String): User? =
+        repository.findByEmail(email)
+
+    /**
      * Получение пользователя по имени пользователя
      * Нужен для Spring Security
      *
      * @return пользователь
      */
-    fun userDetailsService(): UserDetailsService =
+    fun userDetailsServiceByUserName(): UserDetailsService =
         UserDetailsService(this::getByUsername)
+
+    /**
+     * Получение пользователя по email пользователя
+     * Нужен для Spring Security
+     *
+     * @return пользователь
+     */
+    fun userDetailsServiceByEmail(): UserDetailsService =
+        UserDetailsService(this::getByEmail)
 
     /**
      * Получение текущего пользователя

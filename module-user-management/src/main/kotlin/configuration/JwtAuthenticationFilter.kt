@@ -34,13 +34,13 @@ class JwtAuthenticationFilter(
 
         // Обрезаем префикс и получаем имя пользователя из токена
         val jwt: String = authHeader.substring(Constants.AUTH_BEARER_PREFIX.length)
-        val username: String = jwtService.extractUserName(jwt)
+        val email: String = jwtService.extractUserEmail(jwt)
 
-        if (StringUtils.isNotEmpty(username as CharSequence)
+        if (StringUtils.isNotEmpty(email as CharSequence)
             && SecurityContextHolder.getContext().authentication == null
         ) {
-            val userDetails: UserDetails = userService.userDetailsService()
-                    .loadUserByUsername(username)
+            val userDetails: UserDetails = userService.userDetailsServiceByEmail()
+                    .loadUserByUsername(email)
 
             // Если токен валиден, то аутентифицируем пользователя
             if (jwtService.isTokenValid(jwt, userDetails)) {

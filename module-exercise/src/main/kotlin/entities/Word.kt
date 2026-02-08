@@ -17,15 +17,15 @@ class Word(
     @SequenceGenerator(name = "words_generator", sequenceName = "words_seq", allocationSize = 1)
     var id: Long = 0L,
     @Column(name = "category_id", nullable = false)
-    private var categoryId: Long?,
+    var categoryId: Long?,
     @Column(name = "text", nullable = false)
-    private var text: String?,
+    var text: String?,
     @Column(name = "translate", nullable = false)
-    private var translate: String?,
+    var translate: String?,
     @Column(name = "example", nullable = true)
-    private var example: String?,
+    var example: String?,
     @Column(name = "image_url", nullable = true)
-    private var imageUrl: String?
+    var imageUrl: String?
 ) : AbstractEntity() {
     constructor(): this(categoryId = null, text = null, translate = null, example = null, imageUrl = null)
 }

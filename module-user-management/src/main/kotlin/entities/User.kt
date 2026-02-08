@@ -18,50 +18,25 @@ data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_generator")
     @SequenceGenerator(name = "users_generator", sequenceName = "users_seq", allocationSize = 1)
-    var id: Long = 0L,
+    val id: Long? = null,
     @Column(name = "username", nullable = false)
-    private var username: String?,
+    @JvmField
+    var username: String?,
     @Column(name = "user_role", nullable = false)
-    private var userRole: String?,
+    var userRole: String?,
     @Column(name = "password_hash", nullable = false)
-    private var passwordHash: String?,
-    @Column(name = "image_url", nullable = true)
-    private var imageUrl: String?,
+    var passwordHash: String?,
+    @Column(name = "image_url")
+    var imageUrl: String?,
     @Column(name = "email", nullable = false)
-    private var email: String?,
+    var email: String?
 ) : UserDetails, AbstractEntity() {
 
     constructor(): this(username = null, userRole = null, passwordHash = null, imageUrl = null, email = null)
 
     override fun getUsername(): String? = username
 
-    fun setUsername(username: String?) {
-        this.username = username
-    }
-
     override fun getPassword(): String? = passwordHash
-
-    fun setPassword(password: String?) {
-        this.passwordHash = password
-    }
-
-    fun getUserRole(): String? = userRole
-
-    fun setUserRole(userRole: String) {
-        this.userRole = userRole
-    }
-
-    fun getImageUrl(): String? = imageUrl
-
-    fun setImageUrl(imageUrl: String?) {
-        this.imageUrl = imageUrl
-    }
-
-    fun getEmail(): String? = email
-
-    fun setEmail(email: String?) {
-        this.email = email
-    }
 
     override fun getAuthorities(): Collection<GrantedAuthority> =
         listOf<GrantedAuthority>(SimpleGrantedAuthority(userRole))

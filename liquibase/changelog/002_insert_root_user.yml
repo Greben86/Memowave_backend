@@ -18,6 +18,9 @@ databaseChangeLog:
                   name: username
                   value: "root"
               - column:
+                  name: email
+                  value: "root@email.ru"
+              - column:
                   name: user_role
                   value: "ROLE_ADMIN"
               - column:

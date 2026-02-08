@@ -20,6 +20,7 @@ val mapstructVersion = "1.6.3"
 val mockitoVersion = "5.14.0"
 val commonsLangVersion = "3.17.0"
 val loggingVersion = "7.0.3"
+val minioVersion = "8.5.17"
 
 dependencies {
     implementation(project(":module-core"))
@@ -36,10 +37,11 @@ dependencies {
     implementation(group = "io.jsonwebtoken", name = "jjwt-jackson", version = jsonwebtokenVersion)
     implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = openApiVersion)
     implementation(group = "org.mapstruct", name = "mapstruct", version = mapstructVersion)
-    kapt(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
     implementation("org.apache.commons:commons-lang3")
-    runtimeOnly("org.postgresql:postgresql")
     implementation(group = "io.github.oshai", name = "kotlin-logging-jvm", version = loggingVersion)
+    implementation("io.minio:minio:$minioVersion")
+    runtimeOnly("org.postgresql:postgresql")
+    kapt(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
 }
 
 tasks.withType<Test> {

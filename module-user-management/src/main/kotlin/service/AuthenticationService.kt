@@ -40,14 +40,14 @@ class AuthenticationService(
     fun signIn(request: SignInRequest): JwtAuthenticationResponse {
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                request.username,
+                request.email,
                 request.password
             )
         )
 
         val user = userService
-            .userDetailsService()
-            .loadUserByUsername(request.username)
+            .userDetailsServiceByEmail()
+            .loadUserByUsername(request.email)
 
         val jwt = jwtService.generateToken(user)
         return JwtAuthenticationResponse(jwt)

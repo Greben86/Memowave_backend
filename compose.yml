@@ -19,11 +19,11 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '1'
-#          memory: 1G
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
     networks:
       - memowave-network
 
@@ -64,16 +64,31 @@ services:
     ports:
       - "5050:80"
     restart: unless-stopped
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.5'
-#          memory: 1G
     networks:
       - memowave-network
     depends_on:
       postgres:
         condition: service_healthy # Ensure DB is ready before Liquibase runs
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - memowave-network
 
   userservice:
     container_name: user-management-service
@@ -81,6 +96,7 @@ services:
       dockerfile_inline: |
         # Родительский образ контейнера с java внутри
         FROM eclipse-temurin:21-jre-alpine
+        RUN apk add --no-cache curl
         RUN mkdir /app
         WORKDIR /app
         # Копирование jar-файла в контейнер
@@ -98,24 +114,25 @@ services:
     ports:
       - "8081:8081"
     restart: unless-stopped
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - memowave-network
     depends_on:
       postgres:
         condition: service_healthy
 
-  wordservice:
+  exerciseservice:
     container_name: exercise-service
     build:
       dockerfile_inline: |
         # Родительский образ контейнера с java внутри
         FROM eclipse-temurin:21-jre-alpine
+        RUN apk add --no-cache curl
         RUN mkdir /app
         WORKDIR /app
         # Копирование jar-файла в контейнер
@@ -130,19 +147,25 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
       DB_USERNAME: pgadmin
       DB_PASSWORD: pgadmin
+      MINIO_ENDPOINT: "http://minio:9000"
+      MINIO_ACCESS_KEY: "minioadmin"
+      MINIO_SECRET_KEY: "minioadmin"
+      MINIO_BUCKET: "output-files"
     ports:
       - "8082:8082"
     restart: unless-stopped
-    #    healthcheck:
-    #      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
-    #      interval: 10s
-    #      timeout: 5s
-    #      retries: 5
-    #      start_period: 10s
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://exercise-service:8082/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - memowave-network
     depends_on:
       postgres:
+        condition: service_healthy
+      minio:
         condition: service_healthy
 
   gateway:
@@ -151,6 +174,7 @@ services:
       dockerfile_inline: |
         # Родительский образ контейнера с java внутри
         FROM eclipse-temurin:21-jre-alpine
+        RUN apk add --no-cache curl
         RUN mkdir /app
         WORKDIR /app
         # Копирование jar-файла в контейнер
@@ -162,9 +186,9 @@ services:
         ENTRYPOINT ["java", "-jar", "/app.jar"]
     depends_on:
       userservice:
-        condition: service_started
-      wordservice:
-        condition: service_started
+        condition: service_healthy
+      exerciseservice:
+        condition: service_healthy
     environment:
       SERVICE_PORT: 8080
       USER_MANAGEMENT_URL: "http://user-management-service:8081"
@@ -172,18 +196,19 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://gateway-service:8080/actuator/health" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 10s
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://gateway-service:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       - memowave-network
 
 volumes:
   database-data:
   pgadmin-data:
+  minio_data:
 
 networks:
   memowave-network:

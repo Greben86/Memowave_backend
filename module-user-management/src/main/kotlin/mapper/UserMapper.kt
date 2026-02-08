@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy
 interface UserMapper {
 
     @Mapping(target = "userRole", constant = "ROLE_USER")
-    @Mapping(target = "password", source = "encodedPassword")
+    @Mapping(target = "passwordHash", source = "encodedPassword")
     fun fromDto(dto: SignUpRequest, encodedPassword: String): User
 
     fun toDto(entity: User): UserResponse
