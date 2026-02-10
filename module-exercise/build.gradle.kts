@@ -21,6 +21,7 @@ val mockitoVersion = "5.14.0"
 val commonsLangVersion = "3.17.0"
 val loggingVersion = "7.0.3"
 val minioVersion = "8.5.17"
+val openCsvVersion = "5.12.0"
 
 dependencies {
     implementation(project(":module-core"))
@@ -41,6 +42,7 @@ dependencies {
     implementation(group = "io.github.oshai", name = "kotlin-logging-jvm", version = loggingVersion)
     implementation("io.minio:minio:$minioVersion")
     runtimeOnly("org.postgresql:postgresql")
+    implementation("com.opencsv:opencsv:$openCsvVersion")
     kapt(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
 }
 

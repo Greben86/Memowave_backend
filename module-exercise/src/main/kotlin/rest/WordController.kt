@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -35,7 +36,7 @@ class WordController(
     @Operation(summary = "Выполнить импорт слов из файла")
     @GetMapping(value = ["/import"])
     @ResponseStatus(HttpStatus.OK)
-    fun import(@RequestAttribute(required = true) fileName: String) {
+    fun import(@RequestParam(required = true) fileName: String) {
         log.info { "Импорт слов из файла" }
         importService.import(fileName)
     }

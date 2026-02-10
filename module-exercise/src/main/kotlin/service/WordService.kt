@@ -1,9 +1,11 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.dto.WordResponse
+import dev.greben.memowave.entities.Word
 import dev.greben.memowave.mapper.WordMapper
 import dev.greben.memowave.repository.WordRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -25,6 +27,11 @@ class WordService(
         return repository.findAll().stream()
             .map { mapper.toDto(it) }
             .toList()
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun saveWords(words: List<Word>) {
+        words.forEach { repository.save(it) }
     }
 
 }
