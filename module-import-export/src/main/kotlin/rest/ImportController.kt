@@ -1,33 +1,35 @@
 package dev.greben.memowave.rest
 
-import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.service.ImportService
-import dev.greben.memowave.service.WordService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/words")
-@Tag(name = "REST API: Слова")
-class WordController(
-    private val serviceWord: WordService,
+@RequestMapping("api/import")
+@Tag(name = "REST API: Импорт")
+class ImportController(
     private val importService: ImportService
 ) {
     companion object {
         val log = KotlinLogging.logger {}
     }
 
-    @Operation(summary = "Получить все слова")
-    @GetMapping(value = [""])
+    @Operation(summary = "Выполнить загрузку файла")
+    @PostMapping(value = ["/upload"])
     @ResponseStatus(HttpStatus.OK)
-    fun getAllWords(): List<WordResponse> {
-        log.info { "Все слова" }
-        return serviceWord.getAllWords()
+    fun import(
+        @RequestParam(required = true) fileName: String,
+        request: HttpServletRequest
+    ) {
+        log.info { "Загрузка файла $fileName" }
+        importService.upload(request.inputStream, fileName)
     }
 }
