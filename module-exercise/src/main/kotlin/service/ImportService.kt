@@ -2,13 +2,20 @@ package dev.greben.memowave.service
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
+import dev.greben.memowave.dto.ProcessFileEvent
+import dev.greben.memowave.dto.UploadFileEvent
 import dev.greben.memowave.entities.Word
+import dev.greben.memowave.mapper.FileEventMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.RemoveObjectArgs
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,36 +26,38 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ImportService(
+    private val rabbitTemplate: RabbitTemplate,
+    @Value("\${rabbitmq.queue.output}")
+    private val queueName: String,
     private val serviceWord: WordService,
+    private val applicationEventPublisher: ApplicationEventPublisher,
     private val minioClient: MinioClient,
-    @Value("\${minio.bucket-name}")
-    private val backet: String
+    private val eventMapper: FileEventMapper
 ) {
     companion object {
         val log = KotlinLogging.logger {}
     }
 
-    @RabbitListener(queues = ["#{@environment.getProperty('rabbitmq.queue.name')}"])
-    fun receiveMessage(message: String?) {
+    @RabbitListener(queues = ["#{@environment.getProperty('rabbitmq.queue.input')}"])
+    fun receiveMessage(message: UploadFileEvent?) {
         log.info { "Received message: $message" }
-        import(message!!)
-        log.info { "Finish"}
+        val event = eventMapper.toProcess(message!!)
+        applicationEventPublisher.publishEvent(event)
     }
 
-    fun import(fileName: String) {
-        log.info { "Point 1"}
+    @Async
+    @EventListener
+    fun import(event: ProcessFileEvent) {
         val args = GetObjectArgs.builder()
-            .bucket(backet)
-            .`object`(fileName)
+            .bucket(event.backet)
+            .`object`(event.fileName)
             .build()
 
-        log.info { "Point 2"}
         val parser = CSVParserBuilder()
             .withSeparator(';')
             .withIgnoreQuotations(true)
             .build()
 
-        log.info { "Point 3"}
         val words = ArrayList<Word>()
         minioClient.getObject(args).use { stream ->
             val csvReader = CSVReaderBuilder(stream.reader())
@@ -66,16 +75,11 @@ class ImportService(
             }
         }
 
-        log.info { "Point 4"}
         if (words.isNotEmpty()) {
-            serviceWord.saveWords(words)
+//            serviceWord.saveWords(words)
             log.info { "Saved ${words.size} words"}
         }
 
-        log.info { "Point 5"}
-        minioClient.removeObject(RemoveObjectArgs.builder()
-            .bucket(backet)
-            .`object`(fileName)
-            .build())
+        rabbitTemplate.convertAndSend(queueName, eventMapper.changeProcess(event, "SUCCESS"))
     }
 }

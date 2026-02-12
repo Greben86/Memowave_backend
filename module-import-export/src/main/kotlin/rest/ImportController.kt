@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -23,8 +24,8 @@ class ImportController(
     }
 
     @Operation(summary = "Выполнить загрузку файла")
-    @PostMapping(value = ["/upload"])
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(value = ["/upload"], consumes = [MediaType.ALL_VALUE])
+    @ResponseStatus(HttpStatus.ACCEPTED)
     fun import(
         @RequestParam(required = true) fileName: String,
         request: HttpServletRequest

@@ -48,4 +48,5 @@ minio:
 
 rabbitmq:
   queue:
-    name: message_queue
+    input: ${RABBIT_INPUT_QUEUE}
+    output: ${RABBIT_OUTPUT_QUEUE}

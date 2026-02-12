@@ -100,7 +100,7 @@ services:
       # AMQP protocol port (for your applications to connect)
       - "5672:5672"
       # HTTP management UI port (access via http://localhost:15672)
-      - "15672:15672"
+#      - "15672:15672"
     environment:
       # Optional: set custom default user and password (default is guest/guest)
       RABBITMQ_DEFAULT_USER: rbuser
@@ -173,6 +173,8 @@ services:
       RABBIT_PORT: "5672"
       RABBIT_USERNAME: "rbuser"
       RABBIT_PASSWORD: "rbuser"
+      RABBIT_INPUT_QUEUE: "message_queue_process"
+      RABBIT_OUTPUT_QUEUE: "message_queue_upload"
     ports:
       - "8083:8083"
     restart: unless-stopped
@@ -219,6 +221,8 @@ services:
       RABBIT_PORT: "5672"
       RABBIT_USERNAME: "rbuser"
       RABBIT_PASSWORD: "rbuser"
+      RABBIT_INPUT_QUEUE: "message_queue_upload"
+      RABBIT_OUTPUT_QUEUE: "message_queue_process"
     ports:
       - "8082:8082"
     restart: unless-stopped
