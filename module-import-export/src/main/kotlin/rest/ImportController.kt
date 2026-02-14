@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -24,13 +25,14 @@ class ImportController(
     }
 
     @Operation(summary = "Выполнить загрузку файла")
-    @PostMapping(value = ["/upload"], consumes = [MediaType.ALL_VALUE])
+    @PostMapping(value = ["/upload/{categoryId}/category"], consumes = [MediaType.ALL_VALUE])
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun import(
-        @RequestParam(required = true) fileName: String,
+    fun importIntoCategory(
+        @PathVariable("categoryId") categoryId: Long,
+        @RequestParam fileName: String,
         request: HttpServletRequest
     ) {
-        log.info { "Загрузка файла $fileName" }
-        importService.upload(request.inputStream, fileName)
+        log.info { "Загрузка файла $fileName в категорию id=$categoryId" }
+        importService.uploadIntoCategory(request.inputStream, fileName, categoryId)
     }
 }

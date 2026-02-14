@@ -13,9 +13,6 @@ import org.mapstruct.ReportingPolicy
 )
 interface FileEventMapper {
 
-    @Mapping(target = "status", constant = "PROCESS")
-    fun toProcess(event: UploadFileEvent): ProcessFileEvent
-
     @Mapping(target = "status", source = "status")
-    fun changeProcess(event: ProcessFileEvent, status: String): ProcessFileEvent
+    fun toProcess(event: UploadFileEvent, status: String): ProcessFileEvent
 }

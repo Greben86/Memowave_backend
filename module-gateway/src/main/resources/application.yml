@@ -22,7 +22,7 @@ spring:
             - id: exercise-service
               uri: ${EXERCISE_URL}
               predicates:
-                - Path=/exercise-service/**,/api/words/**
+                - Path=/exercise-service/**,/api/words/**,/api/categories/**
     discovery:
       locator:
         enabled: true

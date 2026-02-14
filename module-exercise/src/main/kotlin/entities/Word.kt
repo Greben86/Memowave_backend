@@ -2,9 +2,12 @@ package dev.greben.memowave.entities
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 
@@ -16,8 +19,9 @@ class Word(
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "words_generator")
     @SequenceGenerator(name = "words_generator", sequenceName = "words_seq", allocationSize = 1)
     var id: Long = 0L,
-    @Column(name = "category_id", nullable = false)
-    var categoryId: Long?,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    var category: Category?,
     @Column(name = "text", nullable = false)
     var text: String?,
     @Column(name = "translate", nullable = false)
@@ -27,5 +31,5 @@ class Word(
     @Column(name = "image_url", nullable = true)
     var imageUrl: String?
 ) : AbstractEntity() {
-    constructor(): this(categoryId = null, text = null, translate = null, example = null, imageUrl = null)
+    constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null)
 }

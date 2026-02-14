@@ -43,6 +43,7 @@ class SecurityConfiguration(
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
                 .requestMatchers("api/words").authenticated()
+                .requestMatchers("api/categories").authenticated()
                 .anyRequest().permitAll()
         }
         http.sessionManagement {

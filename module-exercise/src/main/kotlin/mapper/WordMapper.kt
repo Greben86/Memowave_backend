@@ -1,8 +1,10 @@
 package dev.greben.memowave.mapper
 
+import dev.greben.memowave.dto.WordRequest
 import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.entities.Word
 import org.mapstruct.Mapper
+import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
 import org.mapstruct.ReportingPolicy
 
@@ -12,7 +14,9 @@ import org.mapstruct.ReportingPolicy
 )
 interface WordMapper {
 
-    fun fromDto(dto: WordResponse): Word
+    @Mapping(target = "category", expression = "java(null)")
+    fun fromDto(dto: WordRequest): Word
 
+    @Mapping(target = "category", expression = "java(entity.getCategory().getName())")
     fun toDto(entity: Word): WordResponse
 }

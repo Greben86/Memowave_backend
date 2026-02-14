@@ -39,7 +39,7 @@ class ImportService(
             .build())
     }
 
-    fun upload(inputStream: InputStream, fileName: String) {
+    fun uploadIntoCategory(inputStream: InputStream, fileName: String, categoryId: Long) {
         val key = createUniqueKey()
         val args = PutObjectArgs.builder()
             .bucket(backetName)
@@ -48,7 +48,7 @@ class ImportService(
             .build()
         minioClient.putObject(args)
 
-        rabbitTemplate.convertAndSend(queueName, UploadFileEvent(key, backetName, fileName))
+        rabbitTemplate.convertAndSend(queueName, UploadFileEvent(key, backetName, fileName, categoryId))
     }
 
     private fun createUniqueKey(): String =

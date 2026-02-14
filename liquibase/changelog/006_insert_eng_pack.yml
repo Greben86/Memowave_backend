@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 006_1
+      labels: Insert the english pack
+      author: Viktor
+      changes:
+        - insert:
+            tableName: packs
+            columns:
+              - column:
+                  name: id
+                  valueComputed: "NEXTVAL('packs_seq')"
+              - column:
+                  name: name
+                  value: "ENG"
+              - column:
+                  name: description
+                  value: "Английский язык"
+              - column:
+                  name: language
+                  value: "English"
+              - column:
+                  name: created_at
+                  valueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: updated_at
+                  valueComputed: "CURRENT_TIMESTAMP"

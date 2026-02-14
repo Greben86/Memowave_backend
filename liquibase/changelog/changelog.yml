@@ -22,3 +22,7 @@ databaseChangeLog:
   - include:
       file: 005_create_table_words.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 006_insert_eng_pack.yml
+      relativeToChangelogFile: true
