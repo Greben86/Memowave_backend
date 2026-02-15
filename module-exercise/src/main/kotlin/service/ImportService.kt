@@ -2,7 +2,9 @@ package dev.greben.memowave.service
 
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import dev.greben.memowave.dto.UploadFileEvent
+import dev.greben.memowave.configuration.RabbitQueueProperties
+import dev.greben.memowave.dto.EventFileUpload
+import dev.greben.memowave.dto.FileProcessStatus
 import dev.greben.memowave.dto.WordRequest
 import dev.greben.memowave.mapper.FileEventMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -10,7 +12,6 @@ import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
@@ -27,8 +28,7 @@ import java.lang.Exception
 class ImportService(
     private val serviceWord: WordService,
     private val rabbitTemplate: RabbitTemplate,
-    @Value("\${rabbitmq.queue.output}")
-    private val queueName: String,
+    private val queueProperties: RabbitQueueProperties,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val minioClient: MinioClient,
     private val eventMapper: FileEventMapper
@@ -38,14 +38,14 @@ class ImportService(
     }
 
     @RabbitListener(queues = ["#{@environment.getProperty('rabbitmq.queue.input')}"])
-    fun receiveMessage(message: UploadFileEvent?) {
+    fun receiveMessage(message: EventFileUpload?) {
         log.info { "Received message: $message" }
         applicationEventPublisher.publishEvent(message!!)
     }
 
     @Async
     @EventListener
-    fun import(event: UploadFileEvent) {
+    fun import(event: EventFileUpload) {
         try {
             val args = GetObjectArgs.builder()
                 .bucket(event.backet)
@@ -78,11 +78,13 @@ class ImportService(
             val saved = serviceWord.saveWords(words, event.categoryId)
             log.info { "Saved ${saved.size} words"}
 
-            rabbitTemplate.convertAndSend(queueName,
-                eventMapper.toProcess(event, if (words.size == saved.size) "SUCCESS" else "FAIL"))
+            rabbitTemplate.convertAndSend(queueProperties.output!!,
+                eventMapper.toProcess(event,
+                    if (words.size == saved.size) FileProcessStatus.SUCCESS else FileProcessStatus.FAIL))
         } catch (ex: Exception) {
             log.error(ex) { "!! Error ${ex.message}" }
-            rabbitTemplate.convertAndSend(queueName, eventMapper.toProcess(event, "ERROR"))
+            rabbitTemplate.convertAndSend(queueProperties.output!!,
+                eventMapper.toProcess(event, FileProcessStatus.ERROR))
         }
     }
 }

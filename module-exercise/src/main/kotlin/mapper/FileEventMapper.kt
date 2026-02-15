@@ -1,7 +1,8 @@
 package dev.greben.memowave.mapper
 
-import dev.greben.memowave.dto.ProcessFileEvent
-import dev.greben.memowave.dto.UploadFileEvent
+import dev.greben.memowave.dto.EventFileProcess
+import dev.greben.memowave.dto.EventFileUpload
+import dev.greben.memowave.dto.FileProcessStatus
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
@@ -14,5 +15,5 @@ import org.mapstruct.ReportingPolicy
 interface FileEventMapper {
 
     @Mapping(target = "status", source = "status")
-    fun toProcess(event: UploadFileEvent, status: String): ProcessFileEvent
+    fun toProcess(event: EventFileUpload, status: FileProcessStatus): EventFileProcess
 }

@@ -1,9 +1,7 @@
 package dev.greben.memowave.service
 
-import dev.greben.memowave.dto.CategoryRequest
 import dev.greben.memowave.dto.WordRequest
 import dev.greben.memowave.dto.WordResponse
-import dev.greben.memowave.entities.Word
 import dev.greben.memowave.mapper.WordMapper
 import dev.greben.memowave.repository.WordRepository
 import dev.greben.memowave.service.ImportService.Companion.log
@@ -88,9 +86,25 @@ class WordService(
         return results
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun saveWords(words: List<Word>) {
-        words.forEach { repository.save(it) }
+    fun updateWord(wordId: Long, request: WordRequest?): WordResponse? {
+        if (request == null) {
+            log.warn { "!! Request can not be null" }
+            return null
+        }
+
+        var entity = repository.findById(wordId)
+            .orElseThrow { IllegalArgumentException("!! Word with id=$wordId not found") }
+
+        entity = mapper.updateFromDto(entity, request)
+        entity = repository.save(entity)
+
+        return mapper.toDto(entity)
     }
 
+    fun deleteWord(wordId: Long) {
+        val entity = repository.findById(wordId)
+            .orElseThrow { IllegalArgumentException("!! Word with id=$wordId not found") }
+
+        repository.delete(entity)
+    }
 }

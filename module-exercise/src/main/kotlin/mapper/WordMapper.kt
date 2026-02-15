@@ -6,6 +6,7 @@ import dev.greben.memowave.entities.Word
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
+import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
 @Mapper(
@@ -16,6 +17,8 @@ interface WordMapper {
 
     @Mapping(target = "category", expression = "java(null)")
     fun fromDto(dto: WordRequest): Word
+
+    fun updateFromDto(@MappingTarget entity: Word, dto: WordRequest): Word
 
     @Mapping(target = "category", expression = "java(entity.getCategory().getName())")
     fun toDto(entity: Word): WordResponse

@@ -7,9 +7,11 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -25,7 +27,8 @@ class WordController(
     }
 
     @Operation(summary = "Получить все слова")
-    @GetMapping(value = [""])
+    @GetMapping(value = [""],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getAllWords(): List<WordResponse>? {
         log.info { "Все слова" }
@@ -33,18 +36,46 @@ class WordController(
     }
 
     @Operation(summary = "Получить все слова категории")
-    @GetMapping(value = ["{categoryId}/category"])
+    @GetMapping(value = ["{categoryId}/category"],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun getWordsByCategory(@PathVariable("categoryId") categoryId: Long): List<WordResponse>? {
+    fun getWordsByCategory(@PathVariable("categoryId") categoryId: Long): List<WordResponse> {
         log.info { "Все слова категории" }
         return serviceWord.getWordsByCategory(categoryId)
     }
 
     @Operation(summary = "Добавить новое слово")
-    @PostMapping(value = ["word/new"])
+    @PostMapping(value = ["word/new"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun newWord(request: WordRequest?): WordResponse? {
         log.info { "Новое слово $request" }
         return serviceWord.saveWord(request)
+    }
+
+    @Operation(summary = "Обновить слово")
+    @PutMapping(value = ["word/{wordId}/update"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun updateWord(
+        @PathVariable("wordId") wordId: Long,
+        request: WordRequest?
+    ): WordResponse? {
+        log.info { "Обновление слова wordId=$wordId : $request" }
+        return serviceWord.updateWord(wordId, request)
+    }
+
+    @Operation(summary = "Удалить слово")
+    @PutMapping(value = ["word/{wordId}/delete"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteWord(
+        @PathVariable("wordId") wordId: Long
+    ) {
+        log.info { "Удаление слова wordId=$wordId" }
+        return serviceWord.deleteWord(wordId)
     }
 }

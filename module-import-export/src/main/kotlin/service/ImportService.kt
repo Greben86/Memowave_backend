@@ -1,7 +1,8 @@
 package dev.greben.memowave.service
 
-import dev.greben.memowave.dto.ProcessFileEvent
-import dev.greben.memowave.dto.UploadFileEvent
+import dev.greben.memowave.configuration.RabbitQueueProperties
+import dev.greben.memowave.dto.EventFileProcess
+import dev.greben.memowave.dto.EventFileUpload
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.minio.MinioClient
 import io.minio.ObjectWriteArgs
@@ -20,8 +21,7 @@ import java.util.UUID
 @Service
 class ImportService(
     private val rabbitTemplate: RabbitTemplate,
-    @Value("\${rabbitmq.queue.output}")
-    private val queueName: String,
+    private val queueProperties: RabbitQueueProperties,
     private val minioClient: MinioClient,
     @Value("\${minio.bucket-name}")
     private val backetName: String
@@ -31,7 +31,7 @@ class ImportService(
     }
 
     @RabbitListener(queues = ["#{@environment.getProperty('rabbitmq.queue.input')}"])
-    fun receiveMessage(message: ProcessFileEvent?) {
+    fun receiveMessage(message: EventFileProcess?) {
         log.info { "Received message: $message" }
         minioClient.removeObject(RemoveObjectArgs.builder()
             .bucket(message!!.backet)
@@ -48,7 +48,8 @@ class ImportService(
             .build()
         minioClient.putObject(args)
 
-        rabbitTemplate.convertAndSend(queueName, UploadFileEvent(key, backetName, fileName, categoryId))
+        rabbitTemplate.convertAndSend(queueProperties.output!!,
+            EventFileUpload(key, backetName, fileName, categoryId))
     }
 
     private fun createUniqueKey(): String =

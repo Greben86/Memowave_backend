@@ -7,31 +7,29 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.amqp.support.converter.MessageConverter
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-@Configuration
 @EnableRabbit
+@Configuration
+@EnableConfigurationProperties(RabbitQueueProperties::class)
 class RabbitMQConfig(
-    @Value("\${rabbitmq.queue.output}")
-    val outputQueueName: String,
-    @Value("\${rabbitmq.queue.input}")
-    val inputQueueName: String
+    private val queueProperties: RabbitQueueProperties
 ) {
     /**
      * Конфигурируем исходящую очередь
      * @return Очередь RabbitMQ
      */
     @Bean
-    fun outputQueue(): Queue = Queue(outputQueueName, false)
+    fun outputQueue(): Queue = Queue(queueProperties.output, false)
 
     /**
      * Конфигурируем входящую очередь
      * @return Очередь RabbitMQ
      */
     @Bean
-    fun inputQueue(): Queue = Queue(inputQueueName, false)
+    fun inputQueue(): Queue = Queue(queueProperties.input, false)
 
     @Bean
     fun jsonMessageConverter(): MessageConverter = Jackson2JsonMessageConverter()
