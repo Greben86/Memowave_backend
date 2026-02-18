@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Загрузка файла</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>Загрузите ваш файл</h2>
+
+<!-- Сообщение об успехе/ошибке -->
+<div th:if="${message}">
+    <p th:text="${message}" style="color: green;"></p>
+</div>
+
+<form method="POST" action="/admin/upload" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".csv" /><br/><br/>
+    <button type="submit">Отправить на сервер</button>
+</form>
+</body>
+</html>
