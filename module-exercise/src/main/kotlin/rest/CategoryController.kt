@@ -31,7 +31,7 @@ class CategoryController(
     @GetMapping(value = [""],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun getAllCategories(): List<CategoryResponse>? {
+    fun getAllCategories(): List<CategoryResponse> {
         log.info { "Все категории слов" }
         return categoryService.getAllCategories()
     }
