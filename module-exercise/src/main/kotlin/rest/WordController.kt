@@ -6,12 +6,14 @@ import dev.greben.memowave.service.WordService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -30,7 +32,7 @@ class WordController(
     @GetMapping(value = [""],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
-    fun getAllWords(): List<WordResponse>? {
+    fun getAllWords(): List<WordResponse> {
         log.info { "Все слова" }
         return serviceWord.getAllWords()
     }
@@ -49,7 +51,7 @@ class WordController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun newWord(request: WordRequest?): WordResponse? {
+    fun newWord(@RequestBody @Valid request: WordRequest?): WordResponse? {
         log.info { "Новое слово $request" }
         return serviceWord.saveWord(request)
     }
@@ -61,7 +63,7 @@ class WordController(
     @ResponseStatus(HttpStatus.OK)
     fun updateWord(
         @PathVariable("wordId") wordId: Long,
-        request: WordRequest?
+        @RequestBody @Valid request: WordRequest?
     ): WordResponse? {
         log.info { "Обновление слова wordId=$wordId : $request" }
         return serviceWord.updateWord(wordId, request)

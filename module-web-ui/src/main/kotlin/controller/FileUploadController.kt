@@ -28,6 +28,7 @@ class FileUploadController(
     @PostMapping("/upload")
     fun handleFileUpload(
         @RequestParam("file") file: MultipartFile,
+        @RequestParam("category") category: Long,
         redirectAttributes: RedirectAttributes
     ): String {
         if (file.isEmpty) {
@@ -36,7 +37,7 @@ class FileUploadController(
         }
 
         val fileName = file.originalFilename
-        service.uploadIntoCategory(file.inputStream, fileName!!, 1)
+        service.uploadIntoCategory(file.inputStream, fileName!!, category)
         println("Загружен файл: $fileName, размер: ${file.size} байт")
 
         redirectAttributes.addFlashAttribute("message", "Файл '$fileName' успешно загружен!")

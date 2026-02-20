@@ -6,6 +6,7 @@ import dev.greben.memowave.service.CategoryService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -41,7 +43,7 @@ class CategoryController(
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun newCategory(request: CategoryRequest?): CategoryResponse? {
+    fun newCategory(@RequestBody @Valid request: CategoryRequest?): CategoryResponse? {
         log.info { "Новая категория слов $request" }
         return categoryService.saveCategory(request)
     }
@@ -53,7 +55,7 @@ class CategoryController(
     @ResponseStatus(HttpStatus.OK)
     fun updateCategory(
         @PathVariable("categoryId") categoryId: Long,
-        request: CategoryRequest?
+        @RequestBody @Valid request: CategoryRequest?
     ): CategoryResponse? {
         log.info { "Обновление категории слов categoryId=$categoryId : $request" }
         return categoryService.updateCategory(categoryId, request)

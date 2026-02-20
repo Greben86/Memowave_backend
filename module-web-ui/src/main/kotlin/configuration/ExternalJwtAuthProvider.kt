@@ -14,19 +14,22 @@ import org.springframework.stereotype.Component
 class ExternalJwtAuthProvider(private val authClient: AuthClient) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication): Authentication {
+        println(" --> authenticate: $authentication")
         val username = authentication.name
         val password = authentication.credentials.toString()
 
         // Вызов внешнего сервиса за токеном
         val response = authClient.signIn(
             SignInRequest(email = username, password = password))
+        println(" --> response: $response")
 
         val token = response.token ?: throw BadCredentialsException("Внешний сервис не вернул токен")
+        println(" --> token: $token")
 
         // TODO переделать
         val authToken = UsernamePasswordAuthenticationToken(token, username,
             listOf(SimpleGrantedAuthority("ROLE_ADMIN")))
-        var context = SecurityContextHolder.createEmptyContext();
+        val context = SecurityContextHolder.createEmptyContext();
         context.authentication = authToken
         SecurityContextHolder.setContext(context)
 

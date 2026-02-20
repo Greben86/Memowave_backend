@@ -5,13 +5,13 @@ import io.swagger.v3.oas.annotations.media.Schema
 @Schema(description = "Слово - перевод: ответ")
 data class WordResponse(
     @Schema(description = "Категория", example = "Не правильные глаголы")
-    private var category: String?,
+    var category: String,
     @Schema(description = "Слово", example = "example")
-    private var text: String?,
+    var text: String,
     @Schema(description = "Перевод", example = "пример")
-    private var translate: String?,
+    var translate: String,
     @Schema(description = "Пример", example = "It is example")
-    private var example: String?,
+    var example: String,
     @Schema(description = "Ссылка на изображение", example = "http://...")
-    private var imageUrl: String?
+    var imageUrl: String?
 )
