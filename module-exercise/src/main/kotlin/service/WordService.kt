@@ -4,7 +4,7 @@ import dev.greben.memowave.dto.WordRequest
 import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.mapper.WordMapper
 import dev.greben.memowave.repository.WordRepository
-import dev.greben.memowave.service.ImportService.Companion.log
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +19,9 @@ class WordService(
     private val repository: WordRepository,
     private val mapper: WordMapper
 ) {
+    companion object {
+        val log = KotlinLogging.logger {}
+    }
 
     /**
      * Выборка всех слов

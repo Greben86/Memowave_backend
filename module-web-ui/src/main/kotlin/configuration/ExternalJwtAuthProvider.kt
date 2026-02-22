@@ -3,7 +3,6 @@ package dev.greben.memowave.configuration
 import dev.greben.memowave.clients.AuthClient
 import dev.greben.memowave.dto.SignInRequest
 import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -11,7 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 @Component
-class ExternalJwtAuthProvider(private val authClient: AuthClient) : AuthenticationProvider {
+class ExternalJwtAuthProvider(
+    private val authClient: AuthClient
+) : AuthenticationProvider {
 
     override fun authenticate(authentication: Authentication): Authentication {
         println(" --> authenticate: $authentication")
@@ -23,7 +24,7 @@ class ExternalJwtAuthProvider(private val authClient: AuthClient) : Authenticati
             SignInRequest(email = username, password = password))
         println(" --> response: $response")
 
-        val token = response.token ?: throw BadCredentialsException("Внешний сервис не вернул токен")
+        val token = response.token
         println(" --> token: $token")
 
         // TODO переделать

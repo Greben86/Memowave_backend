@@ -42,18 +42,30 @@ class WordController(
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getWordsByCategory(@PathVariable("categoryId") categoryId: Long): List<WordResponse> {
-        log.info { "Все слова категории" }
+        log.info { "Все слова категории $categoryId" }
         return serviceWord.getWordsByCategory(categoryId)
     }
 
     @Operation(summary = "Добавить новое слово")
-    @PostMapping(value = ["word/new"],
+    @PostMapping(value = ["word/add"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
-    fun newWord(@RequestBody @Valid request: WordRequest?): WordResponse? {
+    fun addWord(@RequestBody @Valid request: WordRequest?): WordResponse? {
         log.info { "Новое слово $request" }
         return serviceWord.saveWord(request)
+    }
+
+    @Operation(summary = "Добавить новые слова в категорию")
+    @PostMapping(value = ["{categoryId}/add/all"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    fun addWords(
+        @PathVariable("categoryId") categoryId: Long,
+        @RequestBody @Valid request: List<WordRequest>): List<WordResponse> {
+        log.info { "Новые слова $request в категорию $categoryId" }
+        return serviceWord.saveWords(request, categoryId)
     }
 
     @Operation(summary = "Обновить слово")

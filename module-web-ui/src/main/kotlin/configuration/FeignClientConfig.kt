@@ -17,11 +17,11 @@ class FeignClientConfig {
     @Bean
     fun authRequestInterceptor(): RequestInterceptor? {
         return RequestInterceptor { requestTemplate ->
-            val headerValue = SecurityContextHolder.getContext()
+            val tokenValue = SecurityContextHolder.getContext()
                 ?.authentication
                 ?.principal as String?
-            if (headerValue != null && headerValue.isNotEmpty()) {
-                requestTemplate.header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + headerValue)
+            if (tokenValue != null && tokenValue.isNotEmpty()) {
+                requestTemplate.header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + tokenValue)
             }
         }
     }
