@@ -27,7 +27,9 @@ class Category(
     @Column(name = "description", nullable = false)
     var description: String?,
     @Column(name = "color", nullable = false)
-    var color: String?
+    var color: String?,
+    @Column(name = "user_id", nullable = false)
+    var userId: Long = 0L
 ) : AbstractEntity() {
     constructor(): this(pack = null, name = null, description = null, color = null)
 }

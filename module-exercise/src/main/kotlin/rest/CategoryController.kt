@@ -70,4 +70,16 @@ class CategoryController(
         log.info { "Удаление категории слов categoryId=$categoryId" }
         categoryService.deleteCategory(categoryId)
     }
+
+    @Operation(summary = "Копировать категорию для пользователя")
+    @PostMapping(value = ["category/{categoryId}/copy/{userId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
+    fun copyCategoryForUser(
+        @PathVariable("categoryId") categoryId: Long,
+        @PathVariable("userId") userId: Long
+    ): CategoryResponse? {
+        log.info { "Копирование категории categoryId=$categoryId для пользователя userId=$userId" }
+        return categoryService.copyCategoryForUser(categoryId, userId)
+    }
 }

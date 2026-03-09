@@ -44,6 +44,12 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.opencsv:opencsv:$openCsvVersion")
     kapt(group = "org.mapstruct", name = "mapstruct-processor", version = mapstructVersion)
+    
+    // Test dependencies
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 }
 
 tasks.withType<Test> {

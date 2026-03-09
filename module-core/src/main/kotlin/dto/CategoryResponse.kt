@@ -11,5 +11,7 @@ data class CategoryResponse(
     @Schema(description = "Описание", example = "100 самых популярных непривильных глаголов")
     var description: String?,
     @Schema(description = "Цвет категории", example = "Зеленый")
-    var color: String?
+    var color: String?,
+    @Schema(description = "Идентификатор пользователя", example = "0")
+    var userId: Long = 0L
 )
