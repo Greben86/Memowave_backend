@@ -26,3 +26,7 @@ databaseChangeLog:
   - include:
       file: 006_insert_eng_pack.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 007_update_table_categories.yml
+      relativeToChangelogFile: true
