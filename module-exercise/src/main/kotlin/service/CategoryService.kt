@@ -137,11 +137,12 @@ class CategoryService(
     private fun getCurrentUserId(): Long {
         val authentication = SecurityContextHolder.getContext().authentication
         val principal = authentication.principal
+        authentication.details
         
         // Предполагаем, что в principal находится идентификатор пользователя
         return when (principal) {
             is Long -> principal
-            is String -> principal.toLongOrNull() ?: throw IllegalStateException("Invalid user ID format in token")
+            is String -> principal.toLongOrNull() ?: throw IllegalStateException("Invalid user ID format in token $principal")
             else -> throw IllegalStateException("User ID not found in token")
         }
     }

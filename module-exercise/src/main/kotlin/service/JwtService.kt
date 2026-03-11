@@ -1,6 +1,7 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
@@ -42,6 +43,17 @@ class JwtService(
         SimpleGrantedAuthority(extractClaim(token) {
             it[AUTH_CLAIMS_ROLE].toString()
         })
+
+    /**
+     * Извлечение id пользователя из токена
+     *
+     * @param token токен
+     * @return роль пользователя
+     */
+    fun extractUserId(token: String): Long? =
+        extractClaim(token) {
+            it[AUTH_CLAIMS_USER_ID].toString().toLongOrNull()
+        }
 
     /**
      * Извлечение данных из токена

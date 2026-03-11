@@ -15,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfiguration(
-    private var jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private var jwtAuthenticationFilterForUserId: JwtAuthenticationFilterForUserId,
 ) {
 
     @Bean
@@ -49,7 +49,7 @@ class SecurityConfiguration(
         http.sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         }
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+        http.addFilterBefore(jwtAuthenticationFilterForUserId, UsernamePasswordAuthenticationFilter::class.java)
         http.headers {
             it.frameOptions(Customizer.withDefaults()).disable()
         }

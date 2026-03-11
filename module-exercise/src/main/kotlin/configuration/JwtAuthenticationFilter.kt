@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
-class JwtAuthenticationFilter(
+class JwtAuthenticationFilterForUserId(
     private val jwtService: JwtService
 ): OncePerRequestFilter() {
 
@@ -31,17 +31,15 @@ class JwtAuthenticationFilter(
 
         // Обрезаем префикс и получаем имя пользователя из токена
         val jwt: String = authHeader.substring(Constants.AUTH_BEARER_PREFIX.length)
-        val username: String = jwtService.extractUserName(jwt)
+        val userId: Long? = jwtService.extractUserId(jwt)
 
-        if (StringUtils.isNotEmpty(username as CharSequence)
-            && SecurityContextHolder.getContext().authentication == null
-        ) {
+        if (userId != null && SecurityContextHolder.getContext().authentication == null) {
             // Если токен валиден, то аутентифицируем пользователя
             if (!jwtService.isTokenExpired(jwt)) {
                 val context = SecurityContextHolder.createEmptyContext()
 
                 val authToken = UsernamePasswordAuthenticationToken(
-                    username,
+                    userId,
                     null,
                     listOf(jwtService.extractUserRole(jwt))
                 )

@@ -50,6 +50,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+    testImplementation("com.h2database:h2")
 }
 
 tasks.withType<Test> {
