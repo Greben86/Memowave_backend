@@ -295,11 +295,11 @@ services:
         USER 1000:1000
         # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
         ENTRYPOINT ["java", "-jar", "/app.jar"]
-    depends_on:
-      userservice:
-        condition: service_healthy
-      exerciseservice:
-        condition: service_healthy
+#    depends_on:
+#      userservice:
+#        condition: service_healthy
+#      exerciseservice:
+#        condition: service_healthy
     environment:
       SERVICE_PORT: 8080
       USER_MANAGEMENT_URL: "http://user-management-service:8081"

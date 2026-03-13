@@ -13,5 +13,9 @@ data class WordResponse(
     @Schema(description = "Пример", example = "It is example")
     var example: String,
     @Schema(description = "Ссылка на изображение", example = "http://...")
-    var imageUrl: String?
+    var imageUrl: String?,
+    @Schema(description = "Количество повторений", example = "0")
+    var repetitionCount: Int = 0,
+    @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
+    var nextRepetitionDate: java.time.LocalDateTime?
 )

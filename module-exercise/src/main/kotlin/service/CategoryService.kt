@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 /**
@@ -185,7 +186,9 @@ class CategoryService(
                 text = word.text,
                 translate = word.translate,
                 example = word.example,
-                imageUrl = word.imageUrl
+                imageUrl = word.imageUrl,
+                repetitionCount = 0,
+                nextRepetitionDate = LocalDateTime.now()
             )
             wordRepository.save(newWord)
         }

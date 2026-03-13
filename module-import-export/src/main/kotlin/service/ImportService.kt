@@ -17,6 +17,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.stereotype.Service
 import java.lang.Exception
+import java.time.LocalDateTime
 
 /**
  * Сервис импортирования слов
@@ -66,7 +67,9 @@ class ImportService(
                         text = it[0],
                         translate = it[1],
                         example = it[2],
-                        imageUrl = null)
+                        imageUrl = null,
+                        repetitionCount = 0,
+                        nextRepetitionDate = LocalDateTime.now())
                     words.add(word)
                     log.info { "New word: $word" }
                 }

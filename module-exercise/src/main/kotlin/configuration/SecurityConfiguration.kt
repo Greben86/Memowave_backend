@@ -42,8 +42,8 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
-                .requestMatchers("api/words").authenticated()
-                .requestMatchers("api/categories").authenticated()
+                .requestMatchers("api/words", "api/words/**").authenticated()
+                .requestMatchers("api/categories", "api/categories/**").authenticated()
                 .anyRequest().permitAll()
         }
         http.sessionManagement {

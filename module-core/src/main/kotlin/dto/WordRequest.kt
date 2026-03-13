@@ -13,5 +13,9 @@ data class WordRequest(
     @Schema(description = "Пример", example = "It is example")
     val example: String?,
     @Schema(description = "Ссылка на изображение", example = "http://...")
-    val imageUrl: String?
+    val imageUrl: String?,
+    @Schema(description = "Количество повторений", example = "0")
+    val repetitionCount: Int = 0,
+    @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
+    val nextRepetitionDate: java.time.LocalDateTime?
 )

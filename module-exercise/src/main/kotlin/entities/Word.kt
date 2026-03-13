@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "`words`")
@@ -29,7 +30,11 @@ class Word(
     @Column(name = "example", nullable = true)
     var example: String?,
     @Column(name = "image_url", nullable = true)
-    var imageUrl: String?
+    var imageUrl: String?,
+    @Column(name = "repetition_count", nullable = false)
+    var repetitionCount: Int = 0,
+    @Column(name = "next_repetition_date", nullable = true)
+    var nextRepetitionDate: LocalDateTime?
 ) : AbstractEntity() {
-    constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null)
+    constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null, repetitionCount = 0, nextRepetitionDate = null)
 }
