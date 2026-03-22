@@ -3,10 +3,13 @@ package dev.greben.memowave.service
 import dev.greben.memowave.dto.JwtAuthenticationResponse
 import dev.greben.memowave.dto.SignInRequest
 import dev.greben.memowave.dto.SignUpRequest
+import org.springframework.context.annotation.Lazy
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Сервис аутентификации
@@ -51,5 +54,26 @@ class AuthenticationService(
 
         val jwt = jwtService.generateToken(user)
         return JwtAuthenticationResponse(jwt)
+    }
+
+    /**
+     * Смена пароля пользователя
+     *
+     * @param currentPassword текущий пароль
+     * @param newPassword новый пароль
+     * @return true если пароль успешно изменен, иначе false
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun changePassword(currentPassword: String, newPassword: String): Boolean {
+        val user = userService.getCurrentUser() ?: return false
+
+        // Проверка текущего пароля
+        check(!passwordEncoder.matches(currentPassword, user.passwordHash)) {
+            "Пароль пользователя '${user.username}' не правильный"
+        }
+
+        // Обновление пароля
+        userService.changePassword(user, passwordEncoder.encode(newPassword))
+        return true
     }
 }

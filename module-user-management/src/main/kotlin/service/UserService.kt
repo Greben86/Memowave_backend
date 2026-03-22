@@ -7,7 +7,6 @@ import dev.greben.memowave.mapper.UserMapper
 import dev.greben.memowave.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -19,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserService(
     private val repository: UserRepository,
-    private val mapper: UserMapper,
-    private val passwordEncoder: PasswordEncoder
+    private val mapper: UserMapper
 ) {
 
     /**
@@ -144,7 +142,7 @@ class UserService(
      *
      * @return текущий пользователь
      */
-    private fun getCurrentUser(): User? {
+    fun getCurrentUser(): User? {
         // Получение имени пользователя из контекста Spring Security
         val username = SecurityContextHolder
             .getContext()
@@ -169,22 +167,13 @@ class UserService(
     /**
      * Смена пароля пользователя
      *
-     * @param currentPassword текущий пароль
-     * @param newPassword новый пароль
-     * @return true если пароль успешно изменен, иначе false
+     * @param user пользователь
+     * @param encodedPassword новый пароль
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun changePassword(currentPassword: String, newPassword: String): Boolean {
-        val user = getCurrentUser() ?: return false
-        
-        // Проверка текущего пароля
-        if (!passwordEncoder.matches(currentPassword, user.passwordHash)) {
-            return false
-        }
-        
+    fun changePassword(user: User, encodedPassword: String) {
         // Обновление пароля
-        user.passwordHash = passwordEncoder.encode(newPassword)
+        user.passwordHash = encodedPassword
         repository.save(user)
-        return true
     }
 }

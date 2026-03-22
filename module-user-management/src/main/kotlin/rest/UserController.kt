@@ -2,6 +2,7 @@ package dev.greben.memowave.rest
 
 import dev.greben.memowave.dto.ChangePasswordRequest
 import dev.greben.memowave.dto.UserResponse
+import dev.greben.memowave.service.AuthenticationService
 import dev.greben.memowave.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
@@ -24,7 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/users")
 @Tag(name = "REST API: Пользователь")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val authenticationService: AuthenticationService
 ) {
     companion object {
         val log = KotlinLogging.logger {}
@@ -37,7 +39,6 @@ class UserController(
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
-    @PreAuthorize("hasRole('ADMIN')")
     fun editUser(@RequestBody @Valid dto: UserResponse?): UserResponse? {
         log.info { "Редактирование пользователя" }
         return userService.saveUser(dto)
@@ -103,7 +104,7 @@ class UserController(
     fun changePassword(@RequestBody request: ChangePasswordRequest): ResponseEntity<Unit> {
         log.info { "Смена пароля пользователя" }
         
-        if (userService.changePassword(request.currentPassword, request.newPassword)) {
+        if (authenticationService.changePassword(request.currentPassword, request.newPassword)) {
             return ResponseEntity.ok().build()
         }
         return ResponseEntity.badRequest().build()
