@@ -1,5 +1,6 @@
 package dev.greben.memowave.rest
 
+import dev.greben.memowave.dto.ChangePasswordRequest
 import dev.greben.memowave.dto.UserResponse
 import dev.greben.memowave.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -94,5 +95,17 @@ class UserController(
     fun getById(@PathVariable id: Long): UserResponse? {
         log.info { "Информация о пользователе" }
         return userService.getById(id)
+    }
+
+    @Operation(summary = "Смена пароля пользователя")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = ["/user/change-password"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun changePassword(@RequestBody request: ChangePasswordRequest): ResponseEntity<Unit> {
+        log.info { "Смена пароля пользователя" }
+        
+        if (userService.changePassword(request.currentPassword, request.newPassword)) {
+            return ResponseEntity.ok().build()
+        }
+        return ResponseEntity.badRequest().build()
     }
 }
