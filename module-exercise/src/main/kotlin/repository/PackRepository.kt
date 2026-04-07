@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface PackRepository : JpaRepository<Pack, Long> {
 
-    fun findByName(name: String): Pack?
+    fun findFirstByName(name: String): Pack?
 }

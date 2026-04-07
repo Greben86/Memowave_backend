@@ -5,6 +5,7 @@ import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.mapper.WordMapper
 import dev.greben.memowave.repository.WordRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -29,9 +30,40 @@ class WordService(
      * @return список слов
      */
     fun getAllWords(): List<WordResponse> {
-        return repository.findAll().stream()
+        val isAdmin = isCurrentUserAdmin()
+
+        val allWords = when(isAdmin){
+            true -> repository.findAll()
+            false -> repository.findAllByUserId(getCurrentUserId())
+        }
+
+        return allWords.stream()
             .map { mapper.toDto(it) }
             .toList()
+    }
+
+    /**
+     * Проверка, является ли текущий пользователь администратором
+     */
+    private fun isCurrentUserAdmin(): Boolean {
+        val authentication = SecurityContextHolder.getContext().authentication
+        return authentication.authorities.any { it.authority == "ROLE_ADMIN" }
+    }
+
+    /**
+     * Получение идентификатора текущего пользователя из JWT токена
+     */
+    private fun getCurrentUserId(): Long {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val principal = authentication.principal
+        authentication.details
+
+        // Предполагаем, что в principal находится идентификатор пользователя
+        return when (principal) {
+            is Long -> principal
+            is String -> principal.toLongOrNull() ?: throw IllegalStateException("Invalid user ID format in token $principal")
+            else -> throw IllegalStateException("User ID not found in token")
+        }
     }
 
     /**

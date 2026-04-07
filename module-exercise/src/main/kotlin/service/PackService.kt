@@ -14,5 +14,5 @@ class PackService(
     private val repository: PackRepository
 ) {
 
-    fun lookingForName(name: String): Pack? = repository.findByName(name)
+    fun lookingForName(name: String): Pack? = repository.findFirstByName(name)
 }

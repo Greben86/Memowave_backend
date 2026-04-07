@@ -2,8 +2,10 @@ package dev.greben.memowave.service
 
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.impl.DefaultClaims
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
@@ -23,6 +25,9 @@ class JwtService(
     @Value("\${security.token.signing.key}")
     val jwtSigningKey: String
 ) {
+    companion object {
+        val log = KotlinLogging.logger {}
+    }
 
     /**
      * Извлечение имени пользователя из токена
@@ -92,12 +97,18 @@ class JwtService(
      * @param token токен
      * @return данные
      */
-    private fun extractAllClaims(token: String?): Claims =
-        Jwts.parser()
-            .verifyWith(getSigningKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
+    private fun extractAllClaims(token: String?): Claims {
+        try {
+            return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+        } catch (ex: Exception) {
+            log.error(ex) { ex.message }
+            return DefaultClaims(mapOf<String, Any>())
+        }
+    }
 
     /**
      * Получение ключа для подписи токена

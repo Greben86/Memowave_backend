@@ -81,7 +81,7 @@ class CategoryService(
             .orElseThrow { IllegalArgumentException("!! Category with id=$categoryId not found") }
 
         // Проверка прав доступа
-        checkAccessRights(entity)
+//        checkAccessRights(entity)
 
         // Обновляем категорию
         val updatedEntity = mapper.updateFromDto(entity, request)

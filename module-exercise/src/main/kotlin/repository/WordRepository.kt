@@ -15,4 +15,7 @@ interface WordRepository : JpaRepository<Word, Long> {
     @Modifying
     @Query("delete from Word w where w.category.id = :categoryId")
     fun deleteByCategoryId(categoryId: Long)
+
+    @Query("select w from Word w where w.category.userId = :userId")
+    fun findAllByUserId(userId: Long): List<Word>
 }
