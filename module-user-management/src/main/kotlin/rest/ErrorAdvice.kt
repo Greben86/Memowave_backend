@@ -43,6 +43,17 @@ class ErrorAdvice {
     }
 
     /**
+     * Если поймали исключение [SecurityException], то возвращаем статус 403
+     *
+     * @return ответ со статусом 403
+     */
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(SecurityException::class)
+    fun handleSecurityErrors(ex: SecurityException): String? {
+        return ex.message
+    }
+
+    /**
      * Если поймали исключение [ExpiredJwtException], то возвращаем статус 401
      *
      * @return ответ со статусом 401

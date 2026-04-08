@@ -62,9 +62,10 @@ class CategoryService(
             return null
         }
 
+        val currentUserId = getCurrentUserId()
         var entity = mapper.fromDto(request)
         entity.pack = pack
-        entity.userId = request.userId
+        entity.userId = currentUserId
         entity = repository.save(entity)
 
         return mapper.toDto(entity)
@@ -106,8 +107,6 @@ class CategoryService(
         
         log.info { "Category $categoryId deleted by user ${getCurrentUserId()}" }
     }
-
-    fun lookingForName(name: String): Category? = repository.findByName(name)
 
     /**
      * Проверка прав доступа к категории
@@ -162,9 +161,9 @@ class CategoryService(
         val sourceCategory = repository.findById(categoryId)
             .orElseThrow { IllegalArgumentException("!! Category with id=$categoryId not found") }
         
-        if (sourceCategory.userId != 0L) {
-            throw IllegalArgumentException("!! Only categories with userId=0 can be copied")
-        }
+//        if (sourceCategory.userId != 0L) {
+//            throw IllegalArgumentException("!! Only categories with userId=0 can be copied")
+//        }
 
         // Создаем новую категорию на основе исходной, но с новым userId
         val newCategory = Category(

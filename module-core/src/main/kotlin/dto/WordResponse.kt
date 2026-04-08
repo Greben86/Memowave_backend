@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "Слово - перевод: ответ")
 data class WordResponse(
+    @Schema(description = "Идентификатор слова", example = "123")
+    val id: Long?,
     @Schema(description = "Категория", example = "Не правильные глаголы")
     var category: String,
     @Schema(description = "Слово", example = "example")

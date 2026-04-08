@@ -78,6 +78,7 @@ class WordControllerTest {
     fun `getAllWords should return list of word responses`() {
         // Given
         val wordResponse1 = WordResponse(
+            id = 1L,
             category = "Category 1",
             text = "word1",
             translate = "перевод1",
@@ -87,6 +88,7 @@ class WordControllerTest {
             nextRepetitionDate = LocalDateTime.now().plusDays(1)
         )
         val wordResponse2 = WordResponse(
+            id = 2L,
             category = "Category 2",
             text = "word2",
             translate = "перевод2",
@@ -118,6 +120,7 @@ class WordControllerTest {
         // Given
         val categoryId = 1L
         val wordResponse = WordResponse(
+            id = 1L,
             category = "Category 1",
             text = "word1",
             translate = "перевод1",
@@ -154,6 +157,7 @@ class WordControllerTest {
             nextRepetitionDate = LocalDateTime.now().plusDays(1)
         )
         val wordResponse = WordResponse(
+            id = 1L,
             category = "Category 1",
             text = "new word",
             translate = "новое слово",
@@ -200,6 +204,7 @@ class WordControllerTest {
             nextRepetitionDate = LocalDateTime.now().plusDays(2)
         )
         val wordResponse1 = WordResponse(
+            id = 1L,
             category = "Category 1",
             text = "word1",
             translate = "перевод1",
@@ -209,6 +214,7 @@ class WordControllerTest {
             nextRepetitionDate = LocalDateTime.now().plusDays(1)
         )
         val wordResponse2 = WordResponse(
+            id = 2L,
             category = "Category 1",
             text = "word2",
             translate = "перевод2",
@@ -233,6 +239,8 @@ class WordControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$[1].text").value("word2"))
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].repetitionCount").value(0))
             .andExpect(MockMvcResultMatchers.jsonPath("$[1].repetitionCount").value(0))
+            .andDo { log.info { it.request.contentAsString } }
+            .andDo { log.info { it.response.contentAsString } }
     }
 
     @Test
@@ -249,6 +257,7 @@ class WordControllerTest {
             nextRepetitionDate = LocalDateTime.now().plusDays(3)
         )
         val wordResponse = WordResponse(
+            id = 1L,
             category = "Category 1",
             text = "updated word",
             translate = "обновленное слово",
