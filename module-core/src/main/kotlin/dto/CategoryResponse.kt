@@ -1,6 +1,7 @@
 package dev.greben.memowave.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 @Schema(description = "Категория слов: ответ")
 data class CategoryResponse(
@@ -13,5 +14,9 @@ data class CategoryResponse(
     @Schema(description = "Цвет категории", example = "#FF00FF00")
     var color: String?,
     @Schema(description = "Идентификатор пользователя", example = "0")
-    var userId: Long = 0L
+    var userId: Long = 0L,
+    @Schema(description = "Дата добавления категории", example = "2026-03-13T10:00:00")
+    var createdAt: LocalDateTime?,
+    @Schema(description = "Дата обновления категории", example = "2026-03-13T10:00:00")
+    var updatedAt: LocalDateTime?
 )

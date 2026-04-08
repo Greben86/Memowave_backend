@@ -37,6 +37,15 @@ class WordController(
         return serviceWord.getAllWords()
     }
 
+    @Operation(summary = "Получить слово по идентификатору")
+    @GetMapping(value = ["word/{wordId}/get"],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun getWordById(@PathVariable("wordId") wordId: Long): WordResponse? {
+        log.info { "Слово по идентификатору id=$wordId" }
+        return serviceWord.getWordById(wordId)
+    }
+
     @Operation(summary = "Получить все слова категории")
     @GetMapping(value = ["{categoryId}/category"],
         produces = [MediaType.APPLICATION_JSON_VALUE])

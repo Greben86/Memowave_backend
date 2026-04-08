@@ -49,6 +49,16 @@ class CategoryService(
             .map { mapper.toDto(it) }
             .toList()
 
+    /**
+     * Выборка категори по Id
+     *
+     * @return список категорий
+     */
+    fun getCategoryById(categoryId: Long): CategoryResponse? =
+        repository.findById(categoryId)
+            .map { mapper.toDto(it) }
+            .getOrNull()
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun saveCategory(request: CategoryRequest?): CategoryResponse? {
         if (request == null) {

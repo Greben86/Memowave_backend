@@ -38,6 +38,15 @@ class CategoryController(
         return categoryService.getAllCategories()
     }
 
+    @Operation(summary = "Получить категорию слов по идентификатору")
+    @GetMapping(value = ["category/{categoryId}/get"],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.OK)
+    fun getCategoryById(@PathVariable("categoryId") categoryId: Long): CategoryResponse? {
+        log.info { "Категория слов по идентификатору id=$categoryId" }
+        return categoryService.getCategoryById(categoryId)
+    }
+
     @Operation(summary = "Добавить новую категорию слов")
     @PostMapping(value = ["category/new"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],

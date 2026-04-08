@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Сервис управления словами
@@ -41,6 +42,16 @@ class WordService(
             .map { mapper.toDto(it) }
             .toList()
     }
+
+    /**
+     * Выборка слова по Id
+     *
+     * @return список слов
+     */
+    fun getWordById(wordId: Long): WordResponse? =
+        repository.findById(wordId)
+            .map { mapper.toDto(it) }
+            .getOrNull()
 
     /**
      * Проверка, является ли текущий пользователь администратором

@@ -85,7 +85,9 @@ class WordControllerTest {
             example = "example1",
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
+            nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
         val wordResponse2 = WordResponse(
             id = 2L,
@@ -95,7 +97,9 @@ class WordControllerTest {
             example = "example2",
             imageUrl = null,
             repetitionCount = 1,
-            nextRepetitionDate = LocalDateTime.now().plusDays(2)
+            nextRepetitionDate = LocalDateTime.now().plusDays(2),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
         val expectedWords = listOf(wordResponse1, wordResponse2)
 
@@ -127,7 +131,9 @@ class WordControllerTest {
             example = "example1",
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
+            nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
         val expectedWords = listOf(wordResponse)
 
@@ -164,7 +170,9 @@ class WordControllerTest {
             example = "example",
             imageUrl = "http://image.jpg",
             repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
+            nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
 
         Mockito.`when`(wordService.saveWord(Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)
@@ -211,7 +219,9 @@ class WordControllerTest {
             example = "example1",
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
+            nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
         val wordResponse2 = WordResponse(
             id = 2L,
@@ -221,7 +231,9 @@ class WordControllerTest {
             example = "example2",
             imageUrl = null,
             repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(2)
+            nextRepetitionDate = LocalDateTime.now().plusDays(2),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
         val expectedResponses = listOf(wordResponse1, wordResponse2)
 
@@ -264,7 +276,9 @@ class WordControllerTest {
             example = "updated example",
             imageUrl = "http://updated-image.jpg",
             repetitionCount = 1,
-            nextRepetitionDate = LocalDateTime.now().plusDays(3)
+            nextRepetitionDate = LocalDateTime.now().plusDays(3),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
 
         Mockito.`when`(wordService.updateWord(Mockito.eq(wordId), Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)

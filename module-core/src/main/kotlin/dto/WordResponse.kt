@@ -1,6 +1,7 @@
 package dev.greben.memowave.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 @Schema(description = "Слово - перевод: ответ")
 data class WordResponse(
@@ -19,5 +20,9 @@ data class WordResponse(
     @Schema(description = "Количество повторений", example = "0")
     var repetitionCount: Int = 0,
     @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
-    var nextRepetitionDate: java.time.LocalDateTime?
+    var nextRepetitionDate: LocalDateTime?,
+    @Schema(description = "Дата добавления слова", example = "2026-03-13T10:00:00")
+    var createdAt: LocalDateTime?,
+    @Schema(description = "Дата обновления слова", example = "2026-03-13T10:00:00")
+    var updatedAt: LocalDateTime?
 )
