@@ -127,7 +127,16 @@ class WordService(
         var entity = repository.findById(wordId)
             .orElseThrow { IllegalArgumentException("!! Word with id=$wordId not found") }
 
+        var category: Category? = null
+        if (request.categoryId != null) {
+            category = categoryService.getById(request.categoryId!!)
+            if (category == null) {
+                log.warn { "!! Category with id ${request.categoryId} not found" }
+            }
+        }
+
         entity = mapper.updateFromDto(entity, request)
+        entity.category = category
         entity = repository.save(entity)
 
         return mapper.toDto(entity)

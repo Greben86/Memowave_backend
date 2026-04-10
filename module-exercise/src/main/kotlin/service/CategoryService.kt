@@ -158,6 +158,10 @@ class CategoryService(
         val sourceCategory = repository.findById(categoryId)
             .orElseThrow { IllegalArgumentException("!! Category with id=$categoryId not found") }
 
+//        if (sourceCategory.userId != 0L) {
+//            throw IllegalArgumentException("!! Only categories with userId=0 can be copied")
+//        }
+
         // Создаем новую категорию на основе исходной, но с новым userId
         val newCategory = Category(
             pack = sourceCategory.pack,
