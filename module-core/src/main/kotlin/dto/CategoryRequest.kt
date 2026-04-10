@@ -17,5 +17,8 @@ data class CategoryRequest(
     @Schema(description = "Цвет категории", example = "Зеленый")
     @Size(min = 1, max = 255, message = "Длина пароля должна быть от 1 до 255 символов")
     @NotBlank(message = "Поле не может быть пустым")
-    var color: String
+    var color: String,
+    @Schema(description = "Название иконки", example = "default")
+    @Size(min = 1, max = 50, message = "Длина пароля должна быть от 1 до 50 символов")
+    var iconName: String?
 )

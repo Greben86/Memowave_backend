@@ -23,3 +23,14 @@ databaseChangeLog:
             columns:
               - column:
                   name: user_id
+
+  - changeSet:
+      id: 009_2
+      labels: Populate user_id in words table from categories
+      author: Viktor
+      changes:
+        - sql:
+            sql: |
+              UPDATE words w
+              SET user_id = (SELECT c.user_id FROM categories c WHERE c.id = w.category_id)
+              WHERE exists (SELECT c.id FROM categories c WHERE c.id = w.category_id);

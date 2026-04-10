@@ -23,6 +23,6 @@ interface WordMapper {
     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())")
     fun updateFromDto(@MappingTarget entity: Word, dto: WordRequest): Word
 
-    @Mapping(target = "category", expression = "java(entity.getCategory().getName())")
+    @Mapping(target = "categoryId", expression = "java(entity.getCategory().getId())")
     fun toDto(entity: Word): WordResponse
 }

@@ -42,12 +42,13 @@ class CategoryControllerTest {
             MockMvcRequestBuilders.post("/api/categories")
                 .header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Test Category\",\"description\":\"Test Description\",\"color\":\"Blue\"}")
+                .content("{\"name\":\"Test Category\",\"description\":\"Test Description\",\"color\":\"Blue\",\"iconName\":\"Test\"}")
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Category"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.iconName").value("Test"))
     }
 
     @Order(1)

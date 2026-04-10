@@ -70,7 +70,7 @@ class WordControllerTest {
             .subject(email)
             .issuedAt(currentTime)
             .expiration(DateUtils.addMinutes(currentTime, 1))
-            .signWith<SecretKey?>(Keys.hmacShaKeyFor(keyBytes), Jwts.SIG.HS256)
+            .signWith(Keys.hmacShaKeyFor(keyBytes), Jwts.SIG.HS256)
             .compact()
     }
 
@@ -79,7 +79,7 @@ class WordControllerTest {
         // Given
         val wordResponse1 = WordResponse(
             id = 1L,
-            category = "Category 1",
+            categoryId = 1L,
             text = "word1",
             translate = "перевод1",
             example = "example1",
@@ -91,7 +91,7 @@ class WordControllerTest {
         )
         val wordResponse2 = WordResponse(
             id = 2L,
-            category = "Category 2",
+            categoryId = 2L,
             text = "word2",
             translate = "перевод2",
             example = "example2",
@@ -125,7 +125,7 @@ class WordControllerTest {
         val categoryId = 1L
         val wordResponse = WordResponse(
             id = 1L,
-            category = "Category 1",
+            categoryId = 1L,
             text = "word1",
             translate = "перевод1",
             example = "example1",
@@ -146,7 +146,7 @@ class WordControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1))
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].text").value("word1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].category").value("Category 1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$[0].categoryId").value("1"))
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].repetitionCount").value(0))
     }
 
@@ -164,7 +164,7 @@ class WordControllerTest {
         )
         val wordResponse = WordResponse(
             id = 1L,
-            category = "Category 1",
+            categoryId = 1L,
             text = "new word",
             translate = "новое слово",
             example = "example",
@@ -213,7 +213,7 @@ class WordControllerTest {
         )
         val wordResponse1 = WordResponse(
             id = 1L,
-            category = "Category 1",
+            categoryId = 1L,
             text = "word1",
             translate = "перевод1",
             example = "example1",
@@ -225,7 +225,7 @@ class WordControllerTest {
         )
         val wordResponse2 = WordResponse(
             id = 2L,
-            category = "Category 1",
+            categoryId = 1,
             text = "word2",
             translate = "перевод2",
             example = "example2",
@@ -270,7 +270,7 @@ class WordControllerTest {
         )
         val wordResponse = WordResponse(
             id = 1L,
-            category = "Category 1",
+            categoryId = 1L,
             text = "updated word",
             translate = "обновленное слово",
             example = "updated example",

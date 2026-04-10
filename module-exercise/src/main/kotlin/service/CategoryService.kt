@@ -45,10 +45,19 @@ class CategoryService(
      *
      * @return список категорий
      */
-    fun getAllCategories(): List<CategoryResponse> =
-        repository.findAll().stream()
+    fun getAllCategories(): List<CategoryResponse> {
+        val currentUserId = getCurrentUserId()
+        val isAdmin = isCurrentUserAdmin()
+
+        val allCategories = when(isAdmin){
+            true -> repository.findAll()
+            false -> repository.findAllByUserId(currentUserId)
+        }
+
+        return allCategories.stream()
             .map { mapper.toDto(it) }
             .toList()
+    }
 
     /**
      * Выборка категори по Id
@@ -155,6 +164,7 @@ class CategoryService(
             name = sourceCategory.name,
             description = sourceCategory.description,
             color = sourceCategory.color,
+            iconName = sourceCategory.iconName,
             userId = currentUserId
         )
         

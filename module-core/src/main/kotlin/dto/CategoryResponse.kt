@@ -13,6 +13,8 @@ data class CategoryResponse(
     var description: String?,
     @Schema(description = "Цвет категории", example = "#FF00FF00")
     var color: String?,
+    @Schema(description = "Название иконки", example = "default")
+    var iconName: String?,
     @Schema(description = "Идентификатор пользователя", example = "0")
     var userId: Long = 0L,
     @Schema(description = "Дата добавления категории", example = "2026-03-13T10:00:00")

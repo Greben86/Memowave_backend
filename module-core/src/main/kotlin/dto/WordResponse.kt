@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 data class WordResponse(
     @Schema(description = "Идентификатор слова", example = "123")
     val id: Long?,
-    @Schema(description = "Категория", example = "Не правильные глаголы")
-    var category: String,
+    @Schema(description = "Идентификатор категории", example = "123")
+    val categoryId: Long?,
     @Schema(description = "Слово", example = "example")
     var text: String,
     @Schema(description = "Перевод", example = "пример")

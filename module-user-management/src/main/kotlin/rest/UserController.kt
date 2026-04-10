@@ -46,7 +46,9 @@ class UserController(
         return userService.updateCurrentUser(dto)
     }
 
-    @Operation(summary = "Список всех пользователей, кроме администраторов")
+    @Operation(
+        summary = "Список всех пользователей, кроме администраторов",
+        description = "Требуется роль ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = [""], produces = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasRole('ADMIN')")
@@ -55,7 +57,9 @@ class UserController(
         return userService.getAllUsers()
     }
 
-    @Operation(summary = "Удаление пользователя")
+    @Operation(
+        summary = "Удаление пользователя",
+        description = "Требуется роль ADMIN")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = ["/{id}"])
     @PreAuthorize("hasRole('ADMIN')")
@@ -69,7 +73,9 @@ class UserController(
     }
 
     @PutMapping(value = ["/{id}/set-admin"])
-    @Operation(summary = "Добавить роль ADMIN пользователю")
+    @Operation(
+        summary = "Добавить роль ADMIN пользователю",
+        description = "Требуется роль ADMIN")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
     fun setAdmin(@PathVariable("id") id: Long): ResponseEntity<Void> {
@@ -91,7 +97,9 @@ class UserController(
         }
     }
 
-    @Operation(summary = "Информация о пользователе")
+    @Operation(
+        summary = "Информация о пользователе",
+        description = "Требуется роль ADMIN")
     @GetMapping(value = ["/{id}"])
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")

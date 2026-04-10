@@ -38,3 +38,7 @@ databaseChangeLog:
   - include:
       file: 009_update_table_words.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 010_update_table_categories.yml
+      relativeToChangelogFile: true
