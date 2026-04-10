@@ -1,6 +1,9 @@
 package dev.greben.memowave.configuration
 
 import dev.greben.memowave.service.UserService
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -82,4 +85,17 @@ class SecurityConfiguration(
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager =
         config.authenticationManager
+
+    @Bean
+    fun customOpenAPI(): OpenAPI = OpenAPI()
+        .components(Components()
+            .addSecuritySchemes("jwt-token",
+                SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("Bearer")
+                    .bearerFormat("JWT")
+                    .`in`(SecurityScheme.In.HEADER)
+                    .name("Authorization")
+            )
+        )
 }

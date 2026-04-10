@@ -31,6 +31,8 @@ class Word(
     var example: String?,
     @Column(name = "image_url", nullable = true)
     var imageUrl: String?,
+    @Column(name = "user_id", nullable = false)
+    var userId: Long = 0L,
     @Column(name = "repetition_count", nullable = false)
     var repetitionCount: Int = 0,
     @Column(name = "next_repetition_date", nullable = true)

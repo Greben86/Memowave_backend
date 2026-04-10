@@ -78,17 +78,16 @@ class UserService(
      * @return пользователь
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun saveUser(request: UserResponse?): UserResponse? {
-        val user: User? = getByUsername(request!!.username!!)
-        user?.username = request.username
-        user?.imageUrl = request.imageUrl
-        user?.email = request.email
-        if (user != null) {
-            repository.save(user)
-            return mapper.toDto(user)
+    fun updateCurrentUser(request: UserResponse?): UserResponse? {
+        val user = getCurrentUser()!!
+        val foundUser: User? = getByUsername(request!!.username!!)
+        check(foundUser != null && user.id != foundUser.id) {
+            "Такой пользователь с логином '${request.username}' уже есть"
         }
 
-        return null
+        val updated = mapper.updateFromDto(user, request)
+        repository.save(updated)
+        return mapper.toDto(updated)
     }
 
     /**

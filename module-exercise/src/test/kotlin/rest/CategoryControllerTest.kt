@@ -39,7 +39,7 @@ class CategoryControllerTest {
         // When & Then
         val token: String = TestUtils.generateToken("example@mail.ru", "ROLE_ADMIN", jwtSigningKey!!)
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/categories/category/new")
+            MockMvcRequestBuilders.post("/api/categories")
                 .header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Test Category\",\"description\":\"Test Description\",\"color\":\"Blue\"}")
@@ -72,7 +72,7 @@ class CategoryControllerTest {
         // When & Then
         val token: String = TestUtils.generateToken("example@mail.ru", "ROLE_ADMIN", jwtSigningKey!!)
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/categories/category/1/update")
+            MockMvcRequestBuilders.put("/api/categories/1")
                 .header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Updated Category\",\"description\":\"Updated Description\",\"color\":\"Red\"}")
@@ -89,7 +89,7 @@ class CategoryControllerTest {
         // When & Then
         val token: String = TestUtils.generateToken("example@mail.ru", "ROLE_ADMIN", jwtSigningKey!!)
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/categories/category/1/copy/2")
+            MockMvcRequestBuilders.post("/api/categories/1/copy")
                 .header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + token)
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -104,7 +104,7 @@ class CategoryControllerTest {
         // When & Then
         val token: String = TestUtils.generateToken("example@mail.ru", "ROLE_ADMIN", jwtSigningKey!!)
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/api/categories/category/1/delete")
+            MockMvcRequestBuilders.delete("/api/categories/1")
                 .header(AUTH_HEADER_NAME, AUTH_BEARER_PREFIX + token)
         )
             .andExpect(MockMvcResultMatchers.status().isNoContent)

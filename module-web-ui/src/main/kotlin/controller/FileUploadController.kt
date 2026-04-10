@@ -2,6 +2,7 @@ package dev.greben.memowave.controller
 
 import dev.greben.memowave.clients.CategoryClient
 import dev.greben.memowave.service.ImportService
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
 @RequestMapping("/admin")
+@SecurityRequirement(name = "jwt-token")
 class FileUploadController(
     private val client: CategoryClient,
     private val service: ImportService

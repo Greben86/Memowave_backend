@@ -7,8 +7,9 @@ import dev.greben.memowave.entities.Word
 import dev.greben.memowave.mapper.CategoryMapper
 import dev.greben.memowave.repository.CategoryRepository
 import dev.greben.memowave.repository.WordRepository
+import dev.greben.memowave.util.getCurrentUserId
+import dev.greben.memowave.util.isCurrentUserAdmin
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -140,40 +141,13 @@ class CategoryService(
             throw SecurityException("User can only edit or delete their own categories")
         }
     }
-    
-    /**
-     * Получение идентификатора текущего пользователя из JWT токена
-     */
-    private fun getCurrentUserId(): Long {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val principal = authentication.principal
-        authentication.details
-        
-        // Предполагаем, что в principal находится идентификатор пользователя
-        return when (principal) {
-            is Long -> principal
-            is String -> principal.toLongOrNull() ?: throw IllegalStateException("Invalid user ID format in token $principal")
-            else -> throw IllegalStateException("User ID not found in token")
-        }
-    }
-    
-    /**
-     * Проверка, является ли текущий пользователь администратором
-     */
-    private fun isCurrentUserAdmin(): Boolean {
-        val authentication = SecurityContextHolder.getContext().authentication
-        return authentication.authorities.any { it.authority == "ROLE_ADMIN" }
-    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun copyCategoryForUser(categoryId: Long, userId: Long): CategoryResponse? {
-        // Проверяем, что исходная категория существует и принадлежит общему пользователю (userId = 0)
+    fun copyCategoryForUser(categoryId: Long): CategoryResponse? {
+        val currentUserId = getCurrentUserId()
+        // Проверяем, что исходная категория существует
         val sourceCategory = repository.findById(categoryId)
             .orElseThrow { IllegalArgumentException("!! Category with id=$categoryId not found") }
-        
-//        if (sourceCategory.userId != 0L) {
-//            throw IllegalArgumentException("!! Only categories with userId=0 can be copied")
-//        }
 
         // Создаем новую категорию на основе исходной, но с новым userId
         val newCategory = Category(
@@ -181,7 +155,7 @@ class CategoryService(
             name = sourceCategory.name,
             description = sourceCategory.description,
             color = sourceCategory.color,
-            userId = userId
+            userId = currentUserId
         )
         
         // Сохраняем новую категорию
@@ -196,6 +170,7 @@ class CategoryService(
                 translate = word.translate,
                 example = word.example,
                 imageUrl = word.imageUrl,
+                userId = currentUserId,
                 repetitionCount = 0,
                 nextRepetitionDate = LocalDateTime.now()
             )
@@ -203,7 +178,7 @@ class CategoryService(
         }
 
         // Логируем результат
-        log.info { "Category $categoryId copied for user $userId. New category: ${savedCategory.id}, words: ${savedWords.size}" }
+        log.info { "Category $categoryId copied for user $currentUserId. New category: ${savedCategory.id}, words: ${savedWords.size}" }
         
         // Возвращаем DTO новой категории
         return mapper.toDto(savedCategory)

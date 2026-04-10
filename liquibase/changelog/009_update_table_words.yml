@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 009_1
+      labels: Add user_id column to words table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: user_id

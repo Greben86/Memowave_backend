@@ -140,7 +140,7 @@ class WordControllerTest {
         Mockito.`when`(wordService.getWordsByCategory(categoryId)).thenReturn(expectedWords)
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/words/$categoryId/category")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/words?category=$categoryId")
             .header("Authorization", "Bearer $jwtToken")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -178,7 +178,7 @@ class WordControllerTest {
         Mockito.`when`(wordService.saveWord(Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/words/word/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/words")
             .header("Authorization", "Bearer $jwtToken")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"categoryId\":1,\"text\":\"new word\",\"translate\":\"новое слово\",\"example\":\"example\",\"imageUrl\":\"http://image.jpg\",\"repetitionCount\":0,\"nextRepetitionDate\":\"${LocalDateTime.now().plusDays(1)}\"}")
@@ -237,10 +237,10 @@ class WordControllerTest {
         )
         val expectedResponses = listOf(wordResponse1, wordResponse2)
 
-        Mockito.`when`(wordService.saveWords(Mockito.anyList(), Mockito.eq(categoryId))).thenReturn(expectedResponses)
+        Mockito.`when`(wordService.saveWords(Mockito.anyList())).thenReturn(expectedResponses)
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/words/$categoryId/add/all")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/words/batch")
             .header("Authorization", "Bearer $jwtToken")
             .contentType(MediaType.APPLICATION_JSON)
             .content("[{\"categoryId\":1,\"text\":\"word1\",\"translate\":\"перевод1\",\"example\":\"example1\",\"imageUrl\":\"http://image1.jpg\",\"repetitionCount\":0,\"nextRepetitionDate\":\"${LocalDateTime.now().plusDays(1)}\"},{\"categoryId\":1,\"text\":\"word2\",\"translate\":\"перевод2\",\"example\":\"example2\",\"imageUrl\":null,\"repetitionCount\":0,\"nextRepetitionDate\":\"${LocalDateTime.now().plusDays(2)}\"}]")
@@ -284,7 +284,7 @@ class WordControllerTest {
         Mockito.`when`(wordService.updateWord(Mockito.eq(wordId), Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/words/word/$wordId/update")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/words/$wordId")
             .header("Authorization", "Bearer $jwtToken")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\"categoryId\":1,\"text\":\"updated word\",\"translate\":\"обновленное слово\",\"example\":\"updated example\",\"imageUrl\":\"http://updated-image.jpg\",\"repetitionCount\":1,\"nextRepetitionDate\":\"${LocalDateTime.now().plusDays(3)}\"}")
@@ -301,7 +301,7 @@ class WordControllerTest {
         val wordId = 1L
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/words/word/$wordId/delete")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/words/$wordId")
             .header("Authorization", "Bearer $jwtToken")
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isNoContent)

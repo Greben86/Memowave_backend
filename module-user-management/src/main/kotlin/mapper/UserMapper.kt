@@ -6,6 +6,7 @@ import dev.greben.memowave.dto.UserResponse
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.MappingConstants
+import org.mapstruct.MappingTarget
 import org.mapstruct.ReportingPolicy
 
 @Mapper(
@@ -16,7 +17,15 @@ interface UserMapper {
 
     @Mapping(target = "userRole", constant = "ROLE_USER")
     @Mapping(target = "passwordHash", source = "encodedPassword")
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     fun fromDto(dto: SignUpRequest, encodedPassword: String): User
 
     fun toDto(entity: User): UserResponse
+
+    /**
+     * Обновление сущности User на основе данных из UserResponse
+     */
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
+    fun updateFromDto(@MappingTarget entity: User, dto: UserResponse): User
 }

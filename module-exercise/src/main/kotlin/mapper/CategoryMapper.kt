@@ -16,11 +16,11 @@ import org.mapstruct.ReportingPolicy
 interface CategoryMapper {
 
     @Mapping(target = "pack", expression = "java(null)")
-    @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
-    @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     fun fromDto(dto: CategoryRequest): Category
 
-    @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())")
+    @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     fun updateFromDto(@MappingTarget entity: Category, dto: CategoryRequest): Category
 
     fun toDto(entity: Category): CategoryResponse

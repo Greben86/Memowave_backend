@@ -6,6 +6,7 @@ import dev.greben.memowave.service.AuthenticationService
 import dev.greben.memowave.service.UserService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/users")
 @Tag(name = "REST API: Пользователь")
+@SecurityRequirement(name = "jwt-token")
 class UserController(
     private val userService: UserService,
     private val authenticationService: AuthenticationService
@@ -35,13 +37,13 @@ class UserController(
     @Operation(summary = "Редактирование пользователя")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(
-        value = ["/edit/user"],
+        value = ["/me"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun editUser(@RequestBody @Valid dto: UserResponse?): UserResponse? {
         log.info { "Редактирование пользователя" }
-        return userService.saveUser(dto)
+        return userService.updateCurrentUser(dto)
     }
 
     @Operation(summary = "Список всех пользователей, кроме администраторов")
@@ -55,7 +57,7 @@ class UserController(
 
     @Operation(summary = "Удаление пользователя")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = ["/{id}/user"])
+    @DeleteMapping(value = ["/{id}"])
     @PreAuthorize("hasRole('ADMIN')")
     fun deleteUser(@PathVariable("id") id: Long): ResponseEntity<Nothing> {
         log.info { "Удаление пользователя" }
@@ -66,7 +68,7 @@ class UserController(
         return ResponseEntity.notFound().build()
     }
 
-    @PutMapping(value = ["/{id}/user/set-admin"])
+    @PutMapping(value = ["/{id}/set-admin"])
     @Operation(summary = "Добавить роль ADMIN пользователю")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
@@ -77,7 +79,7 @@ class UserController(
     }
 
     @Operation(summary = "Информация о текущем пользователе")
-    @GetMapping(value = ["/user/current"])
+    @GetMapping(value = ["/me"])
     @ResponseStatus(HttpStatus.OK)
     fun getCurrentUser(): ResponseEntity<UserResponse?> {
         log.info { "Информация о текущем пользователе" }
@@ -90,7 +92,7 @@ class UserController(
     }
 
     @Operation(summary = "Информация о пользователе")
-    @GetMapping(value = ["/{id}/user"])
+    @GetMapping(value = ["/{id}"])
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     fun getById(@PathVariable id: Long): UserResponse? {
@@ -100,7 +102,7 @@ class UserController(
 
     @Operation(summary = "Смена пароля пользователя")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = ["/user/change-password"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PutMapping(value = ["/me/change-password"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun changePassword(@RequestBody request: ChangePasswordRequest): ResponseEntity<Unit> {
         log.info { "Смена пароля пользователя" }
         

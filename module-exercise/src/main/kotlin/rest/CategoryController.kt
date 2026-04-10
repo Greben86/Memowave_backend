@@ -5,6 +5,7 @@ import dev.greben.memowave.dto.CategoryResponse
 import dev.greben.memowave.service.CategoryService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/categories")
 @Tag(name = "REST API: Категории")
+@SecurityRequirement(name = "jwt-token")
 class CategoryController(
     private val categoryService: CategoryService
 ) {
@@ -39,7 +41,7 @@ class CategoryController(
     }
 
     @Operation(summary = "Получить категорию слов по идентификатору")
-    @GetMapping(value = ["category/{categoryId}/get"],
+    @GetMapping(value = ["{categoryId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     fun getCategoryById(@PathVariable("categoryId") categoryId: Long): CategoryResponse? {
@@ -48,7 +50,7 @@ class CategoryController(
     }
 
     @Operation(summary = "Добавить новую категорию слов")
-    @PostMapping(value = ["category/new"],
+    @PostMapping(value = [""],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,7 +60,7 @@ class CategoryController(
     }
 
     @Operation(summary = "Обновить категорию слов")
-    @PutMapping(value = ["category/{categoryId}/update"],
+    @PutMapping(value = ["{categoryId}"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
@@ -71,7 +73,7 @@ class CategoryController(
     }
 
     @Operation(summary = "Удалить категорию слов")
-    @DeleteMapping(value = ["category/{categoryId}/delete"])
+    @DeleteMapping(value = ["{categoryId}"])
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteCategory(
         @PathVariable("categoryId") categoryId: Long
@@ -81,14 +83,13 @@ class CategoryController(
     }
 
     @Operation(summary = "Копировать категорию для пользователя")
-    @PostMapping(value = ["category/{categoryId}/copy/{userId}"],
+    @PostMapping(value = ["{categoryId}/copy"],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun copyCategoryForUser(
-        @PathVariable("categoryId") categoryId: Long,
-        @PathVariable("userId") userId: Long
+        @PathVariable("categoryId") categoryId: Long
     ): CategoryResponse? {
-        log.info { "Копирование категории categoryId=$categoryId для пользователя userId=$userId" }
-        return categoryService.copyCategoryForUser(categoryId, userId)
+        log.info { "Копирование категории categoryId=$categoryId для текущего пользователя" }
+        return categoryService.copyCategoryForUser(categoryId)
     }
 }
