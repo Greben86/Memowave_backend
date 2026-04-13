@@ -1,30 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Загрузка файла</title>
+    <title>Админ-панель - Загрузка файла</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css" />
 </head>
 <body>
-<h2>Загрузите ваш файл</h2>
+    <div class="navbar">
+        <h1>Админ-панель Memowave</h1>
+        <a href="/logout" class="logout-btn">Выйти</a>
+    </div>
+    <div class="container">
+        <h2>Загрузка файлов</h2>
 
 <!-- Сообщение об успехе/ошибке -->
-<div th:if="${message}">
-    <p th:text="${message}" style="color: green;"></p>
+<div th:if="${message}" th:class="${message.contains('успешно') ? 'message success' : 'message'}">
+    <p th:text="${message}"></p>
 </div>
 
 <form method="POST" action="/admin/upload" enctype="multipart/form-data">
-    <label for="cat">Выберите категорию:</label>
-    <select name="category" id="cat">
-        <!-- Цикл по списку categories из модели -->
-        <option th:each="cat : ${categories}"
-                th:value="${cat.id}"
-                th:text="${cat.name}">
-        </option>
-    </select>
+    <div class="form-group">
+        <label for="cat">Выберите категорию:</label>
+        <select name="category" id="cat" class="form-control">
+            <!-- Цикл по списку categories из модели -->
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.name}">
+            </option>
+        </select>
+    </div>
 
     <br/><br/>
-    <input type="file" name="file" accept=".csv"/><br/><br/>
-    <button type="submit">Отправить на сервер</button>
+    <div class="form-group">
+        <input type="file" name="file" accept=".csv" class="form-control"/>
+    </div>
+    <button type="submit">Загрузить файл</button>
 </form>
+    </div>
 </body>
 </html>

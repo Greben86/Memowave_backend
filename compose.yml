@@ -49,30 +49,6 @@ services:
       postgres:
         condition: service_healthy # Ensure DB is ready before Liquibase runs
 
-#  pgadmin:
-#    container_name: memowave_pgadmin_container
-#    image: dpage/pgadmin4:latest
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: "admin@mail.me"
-#      PGADMIN_DEFAULT_PASSWORD: "admin"
-#      PGADMIN_CONFIG_SERVER_MODE: "False"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1" ]
-#      interval: 10s
-#      timeout: 5s
-#      start_period: 10s
-#      retries: 5
-#    volumes:
-#      - pgadmin-data:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
-#    restart: unless-stopped
-#    networks:
-#      - memowave-network
-#    depends_on:
-#      postgres:
-#        condition: service_healthy # Ensure DB is ready before Liquibase runs
-
   minio:
     image: minio/minio
     container_name: minio
@@ -295,11 +271,11 @@ services:
         USER 1000:1000
         # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
         ENTRYPOINT ["java", "-jar", "/app.jar"]
-#    depends_on:
-#      userservice:
-#        condition: service_healthy
-#      exerciseservice:
-#        condition: service_healthy
+    depends_on:
+      userservice:
+        condition: service_started
+      exerciseservice:
+        condition: service_started
     environment:
       SERVICE_PORT: 8080
       USER_MANAGEMENT_URL: "http://user-management-service:8081"
