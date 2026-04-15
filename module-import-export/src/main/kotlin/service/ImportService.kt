@@ -75,7 +75,7 @@ class ImportService(
                 }
             }
 
-            val saved = wordClient.addWords(event.categoryId, words, AUTH_BEARER_PREFIX + token)
+            val saved = wordClient.addWords(words, AUTH_BEARER_PREFIX + token)
             log.info { "Saved ${saved.size} words"}
 
             rabbitTemplate.convertAndSend(queueProperties.output!!,

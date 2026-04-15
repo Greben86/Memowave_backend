@@ -4,6 +4,8 @@ spring:
   cloud:
     config:
       enabled: false
+    discovery:
+      enabled: false
   application:
     name: exercise-service
   datasource:
@@ -21,6 +23,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+eureka:
+  client:
+    enabled: false
 
 security:
   token:

@@ -8,15 +8,11 @@ spring:
         webflux:
           routes:
             - id: user-management-service
-              uri: ${USER_MANAGEMENT_URL}
+              uri: lb://user-management-service
               predicates:
                 - Path=/user-management-service/**,/api/users/**,/api/auth/*
-#            - id: import-export-service
-#              uri: ${IMPORT_EXPORT_URL}
-#              predicates:
-#                - Path=/import-export-service/**,/api/import/**
             - id: exercise-service
-              uri: ${EXERCISE_URL}
+              uri: lb://exercise-service
               predicates:
                 - Path=/exercise-service/**,/api/words/**,/api/categories/**
     discovery:
@@ -24,12 +20,24 @@ spring:
         enabled: true
         lower-case-service-id: true
 
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://discovery-service:8080/eureka
+    healthcheck:
+      enabled: true
+  instance:
+    preferIpAddress: true
+    metadataMap:
+      management.context-path: /
+
 springdoc:
   swagger-ui:
     urls:
       - name: user-management-service
         url: /user-management-service/v3/api-docs
-#      - name: import-export-service
-#        url: /import-export-service/v3/api-docs
       - name: exercise-service
         url: /exercise-service/v3/api-docs

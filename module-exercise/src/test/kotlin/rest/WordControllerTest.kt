@@ -153,15 +153,6 @@ class WordControllerTest {
     @Test
     fun `addWord should return created word response`() {
         // Given
-        val wordRequest = WordRequest(
-            categoryId = 1L,
-            text = "new word",
-            translate = "новое слово",
-            example = "example",
-            imageUrl = "http://image.jpg",
-            repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
-        )
         val wordResponse = WordResponse(
             id = 1L,
             categoryId = 1L,
@@ -192,25 +183,6 @@ class WordControllerTest {
     @Test
     fun `addWords should return list of created word responses`() {
         // Given
-        val categoryId = 1L
-        val wordRequest1 = WordRequest(
-            categoryId = categoryId,
-            text = "word1",
-            translate = "перевод1",
-            example = "example1",
-            imageUrl = "http://image1.jpg",
-            repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(1)
-        )
-        val wordRequest2 = WordRequest(
-            categoryId = categoryId,
-            text = "word2",
-            translate = "перевод2",
-            example = "example2",
-            imageUrl = null,
-            repetitionCount = 0,
-            nextRepetitionDate = LocalDateTime.now().plusDays(2)
-        )
         val wordResponse1 = WordResponse(
             id = 1L,
             categoryId = 1L,
@@ -259,15 +231,6 @@ class WordControllerTest {
     fun `updateWord should return updated word response`() {
         // Given
         val wordId = 1L
-        val wordRequest = WordRequest(
-            categoryId = 1L,
-            text = "updated word",
-            translate = "обновленное слово",
-            example = "updated example",
-            imageUrl = "http://updated-image.jpg",
-            repetitionCount = 1,
-            nextRepetitionDate = LocalDateTime.now().plusDays(3)
-        )
         val wordResponse = WordResponse(
             id = 1L,
             categoryId = 1L,

@@ -103,6 +103,25 @@ services:
     networks:
       - memowave-network
 
+  discovery:
+    container_name: discovery-service
+    build:
+      context: ./module-discovery
+      dockerfile: ./Dockerfile
+    environment:
+      CONFIGURATION_HOST: configuration-service
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://discovery-service:8080/actuator/health" ]
+      interval: 24h
+      start_period: 25s
+      start_interval: 5s
+    depends_on:
+      configuration:
+        condition: service_healthy
+    networks:
+      - memowave-network
+
   userservice:
     container_name: user-management-service
     build:
@@ -125,6 +144,8 @@ services:
     depends_on:
       configuration:
         condition: service_healthy
+      discovery:
+        condition: service_started
       postgres:
         condition: service_healthy
 
@@ -157,6 +178,8 @@ services:
     depends_on:
       configuration:
         condition: service_healthy
+      discovery:
+        condition: service_started
       minio:
         condition: service_healthy
       rabbitmq:
@@ -193,6 +216,8 @@ services:
     depends_on:
       configuration:
         condition: service_healthy
+      discovery:
+        condition: service_started
       minio:
         condition: service_healthy
       rabbitmq:
@@ -220,6 +245,8 @@ services:
     depends_on:
       configuration:
         condition: service_healthy
+      discovery:
+        condition: service_started
       postgres:
         condition: service_healthy
       minio:
@@ -232,18 +259,8 @@ services:
     build:
       context: ./module-gateway
       dockerfile: ./Dockerfile
-    depends_on:
-      configuration:
-        condition: service_healthy
-      userservice:
-        condition: service_started
-      exerciseservice:
-        condition: service_started
     environment:
       CONFIGURATION_HOST: configuration-service
-      USER_MANAGEMENT_URL: "http://user-management-service:8080"
-      EXERCISE_URL: "http://exercise-service:8080"
-      IMPORT_EXPORT_URL: "http://import-export-service:8080"
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -255,6 +272,15 @@ services:
       start_period: 10s
     networks:
       - memowave-network
+    depends_on:
+      configuration:
+        condition: service_healthy
+      discovery:
+        condition: service_started
+      userservice:
+        condition: service_started
+      exerciseservice:
+        condition: service_started
 
 volumes:
   database-data:
