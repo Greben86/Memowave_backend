@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
-@FeignClient(name = "WORD-CLIENT", url = "http://exercise-service:8082")
+@FeignClient(name = "WORD-CLIENT", url = "http://exercise-service:8080")
 interface WordClient {
 
     @PostMapping(value = ["/api/words/{categoryId}/add/all"],

@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 
-@FeignClient(name = "CATEGORY-CLIENT", url = "http://exercise-service:8082", configuration = [FeignClientConfig::class])
+@FeignClient(name = "CATEGORY-CLIENT", url = "http://exercise-service:8080", configuration = [FeignClientConfig::class])
 interface CategoryClient {
 
     @GetMapping(value = ["/api/categories"], produces = [MediaType.APPLICATION_JSON_VALUE])

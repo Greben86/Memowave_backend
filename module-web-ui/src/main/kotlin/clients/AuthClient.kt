@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 
-@FeignClient(name = "AUTH-CLIENT", url = "http://user-management-service:8081")
+@FeignClient(name = "AUTH-CLIENT", url = "http://user-management-service:8080")
 interface AuthClient {
 
     @PostMapping(value = ["/api/auth/login"],

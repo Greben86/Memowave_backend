@@ -14,6 +14,7 @@ repositories {
     mavenCentral()
 }
 
+val springCloudVersion = "4.3.0"
 val jsonwebtokenVersion = "0.12.3"
 val openApiVersion = "2.8.14"
 val mapstructVersion = "1.6.3"
@@ -27,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.cloud:spring-cloud-starter-config:${springCloudVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-management-service
+              uri: ${USER_MANAGEMENT_URL}
+              predicates:
+                - Path=/user-management-service/**,/api/users/**,/api/auth/*
+#            - id: import-export-service
+#              uri: ${IMPORT_EXPORT_URL}
+#              predicates:
+#                - Path=/import-export-service/**,/api/import/**
+            - id: exercise-service
+              uri: ${EXERCISE_URL}
+              predicates:
+                - Path=/exercise-service/**,/api/words/**,/api/categories/**
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: user-management-service
+        url: /user-management-service/v3/api-docs
+#      - name: import-export-service
+#        url: /import-export-service/v3/api-docs
+      - name: exercise-service
+        url: /exercise-service/v3/api-docs

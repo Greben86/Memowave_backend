@@ -30,6 +30,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-amqp")
+    implementation ("org.springframework.cloud:spring-cloud-starter-config:${springCloudVersion}")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:$springCloudVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.minio:minio:$minioVersion")

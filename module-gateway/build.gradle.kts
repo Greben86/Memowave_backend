@@ -17,6 +17,7 @@ kotlin {
     jvmToolchain(21)
 }
 
+val springCloudVersion = "4.3.0"
 val openApiVersion = "2.8.14"
 
 dependencies {
@@ -29,6 +30,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation ("org.springframework.cloud:spring-cloud-starter-config:${springCloudVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")

@@ -1,39 +1,5 @@
-server:
-  port: ${SERVICE_PORT:8083}
-
 spring:
   application:
     name: import-export-service
-  rabbitmq:
-    host: ${RABBIT_HOST}
-    port: ${RABBIT_PORT}
-    username: ${RABBIT_USERNAME}
-    password: ${RABBIT_PASSWORD}
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: always
-
-security:
-  token:
-    signing:
-      key: "${TOKEN_SECRET_KEY:53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855}"
-
-springdoc:
-  api-docs:
-    path: /import-export-service/v3/api-docs
-
-minio:
-  endpoint: ${MINIO_ENDPOINT}
-  accessKey: ${MINIO_ACCESS_KEY}
-  secretKey: ${MINIO_SECRET_KEY}
-  bucket-name: ${MINIO_BUCKET}
-
-rabbitmq:
-  queue:
-    input: ${RABBIT_INPUT_QUEUE}
-    output: ${RABBIT_OUTPUT_QUEUE}
+  config:
+    import: configserver:http://${CONFIGURATION_HOST}:${CONFIGURATION_PORT:8080}/

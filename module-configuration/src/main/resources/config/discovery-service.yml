@@ -1,0 +1,16 @@
+server:
+  port: 8761 # Порт, на котором работает Eureka Server
+
+spring:
+  application:
+    name: module-discovery # Имя нашего Eureka Server
+
+# Конфигурация самого Eureka Server
+eureka:
+  instance:
+    hostname: module-discovery # Адрес хоста
+  client:
+    registerWithEureka: false # Сервер сам себя не регистрирует
+    fetchRegistry: true       # Не запрашивать реестр сервисов
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

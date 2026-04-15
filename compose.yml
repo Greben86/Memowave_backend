@@ -52,9 +52,9 @@ services:
   minio:
     image: minio/minio
     container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
@@ -74,9 +74,9 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     restart: always
-    ports:
+#    ports:
       # AMQP protocol port (for your applications to connect)
-      - "5672:5672"
+#      - "5672:5672"
       # HTTP management UI port (access via http://localhost:15672)
 #      - "15672:15672"
     environment:
@@ -89,32 +89,33 @@ services:
     networks:
       - memowave-network
 
+  configuration:
+    container_name: configuration-service
+    build:
+      context: ./module-configuration
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://configuration-service:8080/actuator/health" ]
+      interval: 24h
+      start_period: 25s
+      start_interval: 5s
+    networks:
+      - memowave-network
+
   userservice:
     container_name: user-management-service
     build:
-      dockerfile_inline: |
-        # Родительский образ контейнера с java внутри
-        FROM eclipse-temurin:21-jre-alpine
-        RUN apk add --no-cache curl
-        RUN mkdir /app
-        WORKDIR /app
-        # Копирование jar-файла в контейнер
-        COPY module-user-management/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
-        # Открытие порта 8081
-        EXPOSE 8081
-        USER 1000:1000
-        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
-        ENTRYPOINT ["java", "-jar", "/app.jar"]
+      context: ./module-user-management
+      dockerfile: ./Dockerfile
     environment:
-      SERVICE_PORT: 8081
+      CONFIGURATION_HOST: configuration-service
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
       DB_USERNAME: pgadmin
       DB_PASSWORD: pgadmin
-    ports:
-      - "8081:8081"
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://user-management-service:8081/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://user-management-service:8080/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -122,27 +123,18 @@ services:
     networks:
       - memowave-network
     depends_on:
+      configuration:
+        condition: service_healthy
       postgres:
         condition: service_healthy
 
   importexportservice:
     container_name: import-export-service
     build:
-      dockerfile_inline: |
-        # Родительский образ контейнера с java внутри
-        FROM eclipse-temurin:21-jre-alpine
-        RUN apk add --no-cache curl
-        RUN mkdir /app
-        WORKDIR /app
-        # Копирование jar-файла в контейнер
-        COPY module-import-export/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
-        # Открытие порта 8083
-        EXPOSE 8083
-        USER 1000:1000
-        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
-        ENTRYPOINT ["java", "-jar", "/app.jar"]
+      context: ./module-import-export
+      dockerfile: ./Dockerfile
     environment:
-      SERVICE_PORT: 8083
+      CONFIGURATION_HOST: configuration-service
       MINIO_ENDPOINT: "http://minio:9000"
       MINIO_ACCESS_KEY: "minioadmin"
       MINIO_SECRET_KEY: "minioadmin"
@@ -153,11 +145,9 @@ services:
       RABBIT_PASSWORD: "rbuser"
       RABBIT_INPUT_QUEUE: "message_queue_upload"
       RABBIT_OUTPUT_QUEUE: "message_queue_process"
-    ports:
-      - "8083:8083"
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://import-export-service:8083/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://import-export-service:8080/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -165,6 +155,8 @@ services:
     networks:
       - memowave-network
     depends_on:
+      configuration:
+        condition: service_healthy
       minio:
         condition: service_healthy
       rabbitmq:
@@ -173,21 +165,10 @@ services:
   webuiservice:
     container_name: web-ui-service
     build:
-      dockerfile_inline: |
-        # Родительский образ контейнера с java внутри
-        FROM eclipse-temurin:21-jre-alpine
-        RUN apk add --no-cache curl
-        RUN mkdir /app
-        WORKDIR /app
-        # Копирование jar-файла в контейнер
-        COPY module-web-ui/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
-        # Открытие порта 8084
-        EXPOSE 8084
-        USER 1000:1000
-        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
-        ENTRYPOINT ["java", "-jar", "/app.jar"]
+      context: ./module-web-ui
+      dockerfile: ./Dockerfile
     environment:
-      SERVICE_PORT: 8084
+      CONFIGURATION_HOST: configuration-service
       MINIO_ENDPOINT: "http://minio:9000"
       MINIO_ACCESS_KEY: "minioadmin"
       MINIO_SECRET_KEY: "minioadmin"
@@ -199,10 +180,10 @@ services:
       RABBIT_INPUT_QUEUE: "message_queue_process"
       RABBIT_OUTPUT_QUEUE: "message_queue_upload"
     ports:
-      - "8084:8084"
+      - "8084:8080"
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://web-ui-service:8084/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://web-ui-service:8080/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -210,6 +191,8 @@ services:
     networks:
       - memowave-network
     depends_on:
+      configuration:
+        condition: service_healthy
       minio:
         condition: service_healthy
       rabbitmq:
@@ -218,29 +201,16 @@ services:
   exerciseservice:
     container_name: exercise-service
     build:
-      dockerfile_inline: |
-        # Родительский образ контейнера с java внутри
-        FROM eclipse-temurin:21-jre-alpine
-        RUN apk add --no-cache curl
-        RUN mkdir /app
-        WORKDIR /app
-        # Копирование jar-файла в контейнер
-        COPY module-exercise/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
-        # Открытие порта 8082
-        EXPOSE 8082
-        USER 1000:1000
-        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
-        ENTRYPOINT ["java", "-jar", "/app.jar"]
+      context: ./module-exercise
+      dockerfile: ./Dockerfile
     environment:
-      SERVICE_PORT: 8082
+      CONFIGURATION_HOST: configuration-service
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
       DB_USERNAME: pgadmin
       DB_PASSWORD: pgadmin
-    ports:
-      - "8082:8082"
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://exercise-service:8082/actuator/health" ]
+      test: [ "CMD", "curl", "-f", "http://exercise-service:8080/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -248,6 +218,8 @@ services:
     networks:
       - memowave-network
     depends_on:
+      configuration:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       minio:
@@ -258,29 +230,20 @@ services:
   gateway:
     container_name: gateway-service
     build:
-      dockerfile_inline: |
-        # Родительский образ контейнера с java внутри
-        FROM eclipse-temurin:21-jre-alpine
-        RUN apk add --no-cache curl
-        RUN mkdir /app
-        WORKDIR /app
-        # Копирование jar-файла в контейнер
-        COPY module-gateway/build/libs/*-0.0.1-SNAPSHOT.jar /app.jar
-        # Открытие порта 8080
-        EXPOSE 8080
-        USER 1000:1000
-        # Команда, которая будет запущена при старте контейнера java -jar ./app.jar
-        ENTRYPOINT ["java", "-jar", "/app.jar"]
+      context: ./module-gateway
+      dockerfile: ./Dockerfile
     depends_on:
+      configuration:
+        condition: service_healthy
       userservice:
         condition: service_started
       exerciseservice:
         condition: service_started
     environment:
-      SERVICE_PORT: 8080
-      USER_MANAGEMENT_URL: "http://user-management-service:8081"
-      EXERCISE_URL: "http://exercise-service:8082"
-      IMPORT_EXPORT_URL: "http://import-export-service:8083"
+      CONFIGURATION_HOST: configuration-service
+      USER_MANAGEMENT_URL: "http://user-management-service:8080"
+      EXERCISE_URL: "http://exercise-service:8080"
+      IMPORT_EXPORT_URL: "http://import-export-service:8080"
     ports:
       - "8080:8080"
     restart: unless-stopped
