@@ -45,8 +45,7 @@ class SecurityConfiguration(
                 // Можно указать конкретный путь
                 // * - 1 уровень вложенности
                 // ** - любое количество уровней вложенности
-                .requestMatchers("api/words", "api/words/**").authenticated()
-                .requestMatchers("api/categories", "api/categories/**").authenticated()
+                .requestMatchers("api/images", "api/images/**").authenticated()
                 .anyRequest().permitAll()
         }
         http.sessionManagement {
@@ -62,7 +61,8 @@ class SecurityConfiguration(
 
     @Bean
     fun customOpenAPI(): OpenAPI = OpenAPI()
-            .components(Components()
+            .components(
+                Components()
                 .addSecuritySchemes("jwt-token",
                     SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)

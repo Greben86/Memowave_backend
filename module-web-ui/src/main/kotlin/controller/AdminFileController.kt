@@ -13,18 +13,18 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/file")
 @SecurityRequirement(name = "jwt-token")
-class FileUploadController(
+class AdminFileController(
     private val client: CategoryClient,
     private val service: ImportService
 ) {
 
-    @GetMapping("/upload")
+    @GetMapping("")
     fun uploadPage(model: Model): String {
         val categories = client.getAllCategories()
         model.addAttribute("categories", categories) // Передаем список в HTML
-        return "upload"
+        return "file"
     }
 
     @PostMapping("/upload")
@@ -35,7 +35,7 @@ class FileUploadController(
     ): String {
         if (file.isEmpty) {
             redirectAttributes.addFlashAttribute("message", "Файл не выбран!")
-            return "redirect:/admin/upload"
+            return "redirect:/admin/file"
         }
 
         val fileName = file.originalFilename
@@ -43,6 +43,15 @@ class FileUploadController(
         println("Загружен файл: $fileName, размер: ${file.size} байт")
 
         redirectAttributes.addFlashAttribute("message", "Файл '$fileName' успешно загружен!")
-        return "redirect:/admin/upload"
+        return "redirect:/admin/file"
+    }
+
+    @PostMapping("/download")
+    fun handleFileDownload(
+        @RequestParam("category") category: Long,
+        redirectAttributes: RedirectAttributes
+    ): String {
+
+        return "redirect:/admin/file"
     }
 }

@@ -195,7 +195,7 @@ services:
       MINIO_ENDPOINT: "http://minio:9000"
       MINIO_ACCESS_KEY: "minioadmin"
       MINIO_SECRET_KEY: "minioadmin"
-      MINIO_BUCKET: "output-files"
+      MINIO_BUCKET: "input-files"
       RABBIT_HOST: "rabbitmq"
       RABBIT_PORT: "5672"
       RABBIT_USERNAME: "rbuser"

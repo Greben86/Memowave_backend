@@ -52,10 +52,10 @@ class JwtService(
      * Извлечение email пользователя из токена
      *
      * @param token токен
-     * @return роль пользователя
+     * @return email пользователя
      */
-    fun extractUserEmail(email: String): String =
-        extractClaim(email) { it[AUTH_CLAIMS_EMAIL].toString() }
+    fun extractUserEmail(token: String): String =
+        extractClaim(token) { it[AUTH_CLAIMS_EMAIL].toString() }
 
     /**
      * Генерация токена

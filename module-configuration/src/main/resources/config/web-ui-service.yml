@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: web-ui-service
   servlet:
     multipart:
       max-file-size: 10MB

@@ -22,10 +22,17 @@ eureka:
     healthcheck:
       enabled: true
   instance:
-    preferIpAddress: true
-    metadataMap:
+    # Не использовать IP, а использовать hostname
+    preferIpAddress: false
+    hostname: user-management-service
+    non-secure-port: ${server.port}
+    instance-enabled-on-itself: true
+    metadata-map:
       management.context-path: /
 
 springdoc:
+  swagger-ui:
+    server-url: ${SWAGGER_SERVER_URL:http://localhost:8080/user-management-service}
+    server-description: Gateway Route for User Management Service
   api-docs:
     path: /user-management-service/v3/api-docs

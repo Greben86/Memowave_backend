@@ -19,7 +19,7 @@
     <p th:text="${message}"></p>
 </div>
 
-<form method="POST" action="/admin/upload" enctype="multipart/form-data">
+<form method="POST" action="/admin/file/upload" enctype="multipart/form-data">
     <div class="form-group">
         <label for="cat">Выберите категорию:</label>
         <select name="category" id="cat" class="form-control">
@@ -36,7 +36,31 @@
         <input type="file" name="file" accept=".csv" class="form-control"/>
     </div>
     <button type="submit">Загрузить файл</button>
+
+    <br>
+    
+    <button type="button" onclick="downloadFile()" class="download-btn">Выгрузить файл</button>
 </form>
+
+<script>
+function downloadFile() {
+    const categorySelect = document.getElementById('cat');
+    const categoryId = categorySelect.value;
+    
+    if (!categoryId) {
+        alert('Пожалуйста, выберите категорию');
+        return;
+    }
+    
+    // Создаем ссылку для скачивания
+    const link = document.createElement('a');
+    link.href = '/admin/file/download?category=' + categoryId;
+    link.download = true;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
     </div>
 </body>
 </html>

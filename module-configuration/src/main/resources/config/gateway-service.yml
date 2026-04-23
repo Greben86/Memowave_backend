@@ -15,6 +15,10 @@ spring:
               uri: lb://exercise-service
               predicates:
                 - Path=/exercise-service/**,/api/words/**,/api/categories/**
+            - id: import-export-service
+              uri: lb://import-export-service
+              predicates:
+                - Path=/import-export-service/**,/api/images/**
     discovery:
       locator:
         enabled: true
@@ -36,8 +40,13 @@ eureka:
 
 springdoc:
   swagger-ui:
+    server-url: http://localhost:8080
+    server-description: Gateway Route
+    disable-swagger-default-url: true
     urls:
-      - name: user-management-service
+      - name: User management service
         url: /user-management-service/v3/api-docs
-      - name: exercise-service
+      - name: Exercise service
         url: /exercise-service/v3/api-docs
+      - name: Import and export service
+        url: /import-export-service/v3/api-docs

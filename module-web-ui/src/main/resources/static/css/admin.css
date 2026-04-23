@@ -57,6 +57,15 @@ button:hover {
     background-color: #2980b9;
 }
 
+.download-btn {
+    background-color: #27ae60;
+    margin-top: 15px;
+}
+
+.download-btn:hover {
+    background-color: #219653;
+}
+
 .message {
     padding: 10px;
     margin-bottom: 15px;

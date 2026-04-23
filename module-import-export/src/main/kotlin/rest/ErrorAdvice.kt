@@ -1,9 +1,8 @@
 package dev.greben.memowave.rest
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
-import org.springframework.data.util.Pair
+import io.minio.errors.MinioException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -20,32 +19,6 @@ import java.util.stream.Stream
 class ErrorAdvice {
     companion object {
         val log = KotlinLogging.logger {}
-    }
-
-    /**
-     * Если поймали исключение валидации [org.springframework.web.bind.MethodArgumentNotValidException], то возвращаем статус 400
-     *
-     * @return ответ со статусом 400
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationErrors(ex: MethodArgumentNotValidException): Map<String?, List<String?>> {
-        log.error { "Ошибка валидации: ${ex.message}" }
-        val fieldErrors = ex.fieldErrors.stream()
-            .filter { it.defaultMessage != null }
-            .map { Pair.of(it.field, it.defaultMessage!!) }
-        val globalErrors = ex.globalErrors.stream()
-            .filter { it.defaultMessage != null }
-            .map { Pair.of(it.objectName, it.defaultMessage!!) }
-
-        return Stream.concat(fieldErrors, globalErrors)
-            .collect(
-                Collectors.groupingBy(
-                    Function { it.getFirst() },
-                    Collectors
-                        .mapping(Function { it.getSecond() }, Collectors.toList())
-                )
-            )
     }
 
     /**
@@ -73,6 +46,18 @@ class ErrorAdvice {
     }
 
     /**
+     * Если поймали любое исключение [MinioException], то возвращаем статус 404
+     *
+     * @return ответ со статусом 404
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(MinioException::class)
+    fun handleMinioError(ex: MinioException): String? {
+        log.error { "Ошибка Minio ${ex.javaClass.simpleName}: ${ex.message}" }
+        return "Ошибка Minio ${ex.javaClass.simpleName}: ${ex.message}"
+    }
+
+    /**
      * Если поймали любое исключение [Exception], то возвращаем статус 500
      *
      * @return ответ со статусом 500
@@ -81,6 +66,6 @@ class ErrorAdvice {
     @ExceptionHandler(Exception::class)
     fun handleAnyErrors(ex: Exception): String? {
         log.error { "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}" }
-        return "${ex.javaClass.simpleName}: ${ex.message}"
+        return "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}"
     }
 }

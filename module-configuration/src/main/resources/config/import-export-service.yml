@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: import-export-service
   rabbitmq:
     host: ${RABBIT_HOST}
     port: ${RABBIT_PORT}
@@ -17,8 +15,12 @@ eureka:
     healthcheck:
       enabled: true
   instance:
-    preferIpAddress: true
-    metadataMap:
+    # Не использовать IP, а использовать hostname
+    preferIpAddress: false
+    hostname: import-export-service
+    non-secure-port: ${server.port}
+    instance-enabled-on-itself: true
+    metadata-map:
       management.context-path: /
 
 springdoc:

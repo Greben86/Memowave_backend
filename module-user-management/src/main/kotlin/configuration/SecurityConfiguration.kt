@@ -96,6 +96,7 @@ class SecurityConfiguration(
                     .bearerFormat("JWT")
                     .`in`(SecurityScheme.In.HEADER)
                     .name("Authorization")
+                    .description("Введите JWT-токен в формате **Bearer &lt;token&gt;**")
             )
         )
 }
