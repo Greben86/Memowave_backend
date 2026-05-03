@@ -88,6 +88,9 @@ class WordControllerTest {
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -100,6 +103,9 @@ class WordControllerTest {
             imageUrl = null,
             repetitionCount = 1,
             nextRepetitionDate = LocalDateTime.now().plusDays(2),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -134,6 +140,9 @@ class WordControllerTest {
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -164,6 +173,9 @@ class WordControllerTest {
             imageUrl = "http://image.jpg",
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -194,6 +206,9 @@ class WordControllerTest {
             imageUrl = "http://image1.jpg",
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now().plusDays(1),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -206,6 +221,9 @@ class WordControllerTest {
             imageUrl = null,
             repetitionCount = 0,
             nextRepetitionDate = LocalDateTime.now().plusDays(2),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -242,6 +260,9 @@ class WordControllerTest {
             imageUrl = "http://updated-image.jpg",
             repetitionCount = 1,
             nextRepetitionDate = LocalDateTime.now().plusDays(3),
+            quality = 0,
+            prevEaseFactor = 2.5,
+            prevInterval = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )

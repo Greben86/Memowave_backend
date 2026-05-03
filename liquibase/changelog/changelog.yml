@@ -42,3 +42,11 @@ databaseChangeLog:
   - include:
       file: 010_update_table_categories.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 011_update_table_words.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: 012_update_table_users.yml
+      relativeToChangelogFile: true

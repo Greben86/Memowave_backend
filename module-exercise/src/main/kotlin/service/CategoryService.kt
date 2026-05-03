@@ -186,7 +186,10 @@ class CategoryService(
                 imageUrl = word.imageUrl,
                 userId = currentUserId,
                 repetitionCount = 0,
-                nextRepetitionDate = LocalDateTime.now()
+                nextRepetitionDate = LocalDateTime.now(),
+                quality = 0,
+                prevEaseFactor = 2.5,
+                prevInterval = 0
             )
             wordRepository.save(newWord)
         }

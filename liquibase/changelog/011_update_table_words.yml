@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 011_1
+      labels: Add new columns to words table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: quality
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prev_ease_factor
+                  type: DOUBLE
+                  defaultValue: 2.5
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prev_interval
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: quality
+              - column:
+                  name: prevEaseFactor
+              - column:
+                  name: prevInterval

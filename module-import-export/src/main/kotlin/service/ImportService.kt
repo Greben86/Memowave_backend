@@ -69,7 +69,10 @@ class ImportService(
                         example = it[2],
                         imageUrl = null,
                         repetitionCount = 0,
-                        nextRepetitionDate = LocalDateTime.now())
+                        nextRepetitionDate = LocalDateTime.now(),
+                        quality = 0,
+                        prevEaseFactor = 2.5,
+                        prevInterval = 0)
                     words.add(word)
                     log.info { "New word: $word" }
                 }

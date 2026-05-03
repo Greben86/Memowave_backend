@@ -23,6 +23,12 @@ data class WordResponse(
     var repetitionCount: Int = 0,
     @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
     var nextRepetitionDate: LocalDateTime?,
+    @Schema(description = "Качество повторения", example = "0")
+    var quality: Long,
+    @Schema(description = "Предыдущий коэффициент повторения", example = "2.5")
+    var prevEaseFactor: Double,
+    @Schema(description = "Предыдущий интервал повторения", example = "0")
+    var prevInterval: Long,
     @Schema(description = "Дата добавления слова", example = "2026-03-13T10:00:00")
     var createdAt: LocalDateTime?,
     @Schema(description = "Дата обновления слова", example = "2026-03-13T10:00:00")

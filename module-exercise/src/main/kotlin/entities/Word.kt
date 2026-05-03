@@ -36,7 +36,14 @@ class Word(
     @Column(name = "repetition_count", nullable = false)
     var repetitionCount: Int = 0,
     @Column(name = "next_repetition_date", nullable = true)
-    var nextRepetitionDate: LocalDateTime?
+    var nextRepetitionDate: LocalDateTime?,
+    @Column(name = "quality", nullable = false)
+    var quality: Long,
+    @Column(name = "prev_ease_factor", nullable = false)
+    var prevEaseFactor: Double,
+    @Column(name = "prev_interval", nullable = false)
+    var prevInterval: Long
 ) : AbstractEntity() {
-    constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null, repetitionCount = 0, nextRepetitionDate = null)
+    constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null,
+        repetitionCount = 0, nextRepetitionDate = null, quality = 0, prevEaseFactor = 2.5, prevInterval = 0)
 }

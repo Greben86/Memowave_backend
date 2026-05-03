@@ -29,10 +29,12 @@ data class User(
     @Column(name = "image_url")
     var imageUrl: String?,
     @Column(name = "email", nullable = false)
-    var email: String?
+    var email: String?,
+    @Column(name = "experience", nullable = false)
+    var experience: Long
 ) : UserDetails, AbstractEntity() {
 
-    constructor(): this(username = null, userRole = null, passwordHash = null, imageUrl = null, email = null)
+    constructor(): this(username = null, userRole = null, passwordHash = null, imageUrl = null, email = null, experience = 0)
 
     override fun getUsername(): String? = username
 
