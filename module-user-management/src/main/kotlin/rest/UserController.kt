@@ -111,7 +111,7 @@ class UserController(
     @Operation(summary = "Смена пароля пользователя")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = ["/me/change-password"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun changePassword(@RequestBody request: ChangePasswordRequest): ResponseEntity<Unit> {
+    fun changePassword(@RequestBody @Valid request: ChangePasswordRequest): ResponseEntity<Unit> {
         log.info { "Смена пароля пользователя" }
         
         if (authenticationService.changePassword(request.currentPassword, request.newPassword)) {

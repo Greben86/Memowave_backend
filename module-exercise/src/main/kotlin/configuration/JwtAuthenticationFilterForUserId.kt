@@ -35,7 +35,7 @@ class JwtAuthenticationFilterForUserId(
 
         if (userId != null && SecurityContextHolder.getContext().authentication == null) {
             // Если токен валиден, то аутентифицируем пользователя
-            if (!jwtService.isTokenExpired(jwt)) {
+            if (jwtService.isTokenAccess(jwt) && !jwtService.isTokenExpired(jwt)) {
                 val context = SecurityContextHolder.createEmptyContext()
 
                 val authToken = UsernamePasswordAuthenticationToken(

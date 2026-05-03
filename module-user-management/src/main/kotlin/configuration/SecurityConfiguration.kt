@@ -56,7 +56,6 @@ class SecurityConfiguration(
                 .requestMatchers("/api/auth/*").permitAll()
                 .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers("/user-management-service/**").permitAll()
-                .requestMatchers("api/users").authenticated()
                 .anyRequest().permitAll()
         }
         http.sessionManagement {

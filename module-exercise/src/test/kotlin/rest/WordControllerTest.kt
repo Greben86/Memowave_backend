@@ -5,7 +5,9 @@ import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.service.WordService
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
+import dev.greben.memowave.utils.TokenType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
@@ -65,7 +67,7 @@ class WordControllerTest {
         val keyBytes = Decoders.BASE64.decode(jwtSigningKey)
         return Jwts.builder()
             .claims()
-            .add(mapOf(AUTH_CLAIMS_USER_ID to 1L, AUTH_CLAIMS_LOGIN to email, AUTH_CLAIMS_ROLE to role))
+            .add(mapOf(AUTH_CLAIMS_TYPE to TokenType.ACCESS.name, AUTH_CLAIMS_USER_ID to 1L, AUTH_CLAIMS_LOGIN to email, AUTH_CLAIMS_ROLE to role))
             .and()
             .subject(email)
             .issuedAt(currentTime)

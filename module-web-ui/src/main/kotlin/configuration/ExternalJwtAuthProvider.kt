@@ -45,7 +45,7 @@ class ExternalJwtAuthProvider(
             val response = authClient.signIn(SignInRequest(email = username, password = password))
             log.info { " --> response: $response" }
 
-            val token = response.token
+            val token = response.accessToken
             log.info { " --> token: $token" }
 
             val role = extractUserRole(token)

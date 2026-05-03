@@ -1,6 +1,7 @@
 package dev.greben.memowave.rest
 
 import dev.greben.memowave.dto.JwtAuthenticationResponse
+import dev.greben.memowave.dto.JwtRefreshRequest
 import dev.greben.memowave.dto.SignInRequest
 import dev.greben.memowave.dto.SignUpRequest
 import dev.greben.memowave.service.AuthenticationService
@@ -44,5 +45,17 @@ class AuthController(
     fun signIn(@RequestBody @Valid request: SignInRequest): JwtAuthenticationResponse {
         log.info { "Авторизация пользователя" }
         return authenticationService.signIn(request)
+    }
+
+    @Operation(summary = "Обновление access токена")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(
+        value = ["/refresh"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun refresh(@RequestBody @Valid request: JwtRefreshRequest): JwtAuthenticationResponse {
+        log.info { "Обновление access токена" }
+        return authenticationService.refreshAccessToken(request)
     }
 }

@@ -4,23 +4,24 @@ import dev.greben.memowave.entities.User
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_EMAIL
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
+import dev.greben.memowave.utils.TokenType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.impl.DefaultClaims
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
+import java.security.Key
 import java.util.*
 import java.util.function.Function
 import javax.crypto.SecretKey
-import kotlin.collections.mapOf
 
 /**
  * Сервис для JWT
@@ -31,9 +32,13 @@ class JwtService(
     @Value("\${security.token.signing.key}")
     val jwtSigningKey: String,
 
-    // Время жизни токена в миллисекундах
-    @Value("\${security.token.expiration.minutes}")
-    val jwtExpirationMinutes: Int
+    // Время жизни refresh токена в миллисекундах
+    @Value("\${security.token.expiration.refresh.minutes}")
+    val jwtRefreshExpirationMinutes: Int,
+
+    // Время жизни access токена в миллисекундах
+    @Value("\${security.token.expiration.access.minutes}")
+    val jwtAccessExpirationMinutes: Int
 ) {
     companion object {
         val log = KotlinLogging.logger {}
@@ -63,15 +68,16 @@ class JwtService(
      * @param userDetails данные пользователя
      * @return токен
      */
-    fun generateToken(userDetails: UserDetails): String {
+    fun generateRefreshToken(userDetails: UserDetails): String {
         val claims = HashMap<String?, Any?>()
         if (userDetails is User) {
+            claims[AUTH_CLAIMS_TYPE] = TokenType.REFRESH
             claims[AUTH_CLAIMS_USER_ID] = userDetails.id
             claims[AUTH_CLAIMS_LOGIN] = userDetails.username
             claims[AUTH_CLAIMS_ROLE] = userDetails.userRole
             claims[AUTH_CLAIMS_EMAIL] = userDetails.email
         }
-        return generateToken(claims, userDetails)
+        return generateRefreshToken(claims, userDetails)
     }
 
     /**
@@ -87,6 +93,24 @@ class JwtService(
     }
 
     /**
+     * Проверка, что это refresh токен
+     *
+     * @param token токен
+     * @return true, если это refresh токен
+     */
+    fun isTokenRefresh(token: String): Boolean =
+        extractClaim(token) { TokenType.REFRESH.name == it[AUTH_CLAIMS_TYPE] as String }
+
+    /**
+     * Проверка, что это access токен
+     *
+     * @param token токен
+     * @return true, если это access токен
+     */
+    fun isTokenAccess(token: String): Boolean =
+        extractClaim(token) { TokenType.ACCESS.name == it[AUTH_CLAIMS_TYPE] as String }
+
+    /**
      * Извлечение данных из токена
      *
      * @param token токен
@@ -100,19 +124,42 @@ class JwtService(
     }
 
     /**
-     * Генерация токена
+     * Генерация refresh токена
      *
      * @param extraClaims дополнительные данные
      * @param userDetails данные пользователя
-     * @return токен
+     * @return refresh токен
      */
-    private fun generateToken(extraClaims: MutableMap<String?, Any?>?, userDetails: UserDetails): String {
+    private fun generateRefreshToken(extraClaims: MutableMap<String?, Any?>?, userDetails: UserDetails): String {
         val currentTime = Date(System.currentTimeMillis())
         return Jwts.builder()
             .claims().add(extraClaims).and()
             .subject(userDetails.username)
             .issuedAt(currentTime)
-            .expiration(DateUtils.addMinutes(currentTime, jwtExpirationMinutes))
+            .expiration(DateUtils.addMinutes(currentTime, jwtRefreshExpirationMinutes))
+            .signWith(getSigningKey(), Jwts.SIG.HS256)
+            .compact()
+    }
+
+    /**
+     * Создание нового access токена из refresh токена
+     *
+     * @param refreshToken refresh токен
+     * @return access токен
+     */
+    fun generateAccessTokenFromRefreshToken(refreshToken: String): String {
+        val currentTime = Date(System.currentTimeMillis())
+        val extraClaims: Claims = extractAllClaims(refreshToken)
+        val claims = HashMap<String?, Any?>()
+        claims.putAll(extraClaims)
+        claims[AUTH_CLAIMS_TYPE] = TokenType.ACCESS
+
+        // Создаём новый Access Token
+        return Jwts.builder()
+            .claims().add(claims).and()
+            .subject(extraClaims.subject)
+            .issuedAt(currentTime)
+            .expiration(DateUtils.addMinutes(currentTime, jwtAccessExpirationMinutes))
             .signWith(getSigningKey(), Jwts.SIG.HS256)
             .compact()
     }
@@ -123,7 +170,7 @@ class JwtService(
      * @param token токен
      * @return true, если токен просрочен
      */
-    private fun isTokenExpired(token: String?): Boolean =
+    fun isTokenExpired(token: String?): Boolean =
         extractExpiration(token).before(Date())
 
     /**

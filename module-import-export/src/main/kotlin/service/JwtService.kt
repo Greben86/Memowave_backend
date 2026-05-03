@@ -1,6 +1,8 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.utils.Constants
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
+import dev.greben.memowave.utils.TokenType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -71,6 +73,15 @@ class JwtService(
      */
     fun isTokenExpired(token: String?): Boolean =
         extractExpiration(token).before(Date())
+
+    /**
+     * Проверка, что это access токен
+     *
+     * @param token токен
+     * @return true, если это access токен
+     */
+    fun isTokenAccess(token: String): Boolean =
+        extractClaim(token) { TokenType.ACCESS.name == it[AUTH_CLAIMS_TYPE] as String }
 
     /**
      * Извлечение даты истечения токена

@@ -1,7 +1,9 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
+import dev.greben.memowave.utils.TokenType
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -30,13 +32,13 @@ class JwtService(
     }
 
     /**
-     * Извлечение имени пользователя из токена
+     * Проверка, что это access токен
      *
      * @param token токен
-     * @return имя пользователя
+     * @return true, если это access токен
      */
-    fun extractUserName(token: String): String =
-        extractClaim<String>(token, Claims::getSubject)
+    fun isTokenAccess(token: String): Boolean =
+        extractClaim(token) { TokenType.ACCESS.name == it[AUTH_CLAIMS_TYPE] as String }
 
     /**
      * Извлечение роли пользователя из токена

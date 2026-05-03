@@ -42,8 +42,8 @@ class JwtAuthenticationFilter(
             val userDetails: UserDetails = userService.userDetailsServiceByEmail()
                     .loadUserByUsername(email)
 
-            // Если токен валиден, то аутентифицируем пользователя
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            // Если это access токен и он валиден, то аутентифицируем пользователя
+            if (jwtService.isTokenAccess(jwt) && jwtService.isTokenValid(jwt, userDetails)) {
                 val context = SecurityContextHolder.createEmptyContext()
 
                 val authToken = UsernamePasswordAuthenticationToken(
