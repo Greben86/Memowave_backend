@@ -2,6 +2,7 @@ package dev.greben.memowave.rest
 
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_SESSION
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import dev.greben.memowave.utils.TokenType
@@ -20,7 +21,11 @@ object TestUtils {
         val keyBytes = Decoders.BASE64.decode(jwtSigningKey)
         return Jwts.builder()
             .claims()
-            .add(Map.of<String?, Any?>(AUTH_CLAIMS_TYPE, TokenType.ACCESS.name, AUTH_CLAIMS_USER_ID, 1L, AUTH_CLAIMS_LOGIN, email, AUTH_CLAIMS_ROLE, role))
+            .add(mapOf(AUTH_CLAIMS_TYPE to TokenType.ACCESS.name,
+                AUTH_CLAIMS_USER_ID to 1L,
+                AUTH_CLAIMS_LOGIN to email,
+                AUTH_CLAIMS_ROLE to role,
+                AUTH_CLAIMS_SESSION to 123L))
             .and()
             .subject(email)
             .issuedAt(currentTime)

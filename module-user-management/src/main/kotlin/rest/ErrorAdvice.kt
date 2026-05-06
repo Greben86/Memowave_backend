@@ -31,7 +31,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationErrors(ex: MethodArgumentNotValidException): Map<String?, List<String?>> {
-        log.error { "Ошибка валидации: ${ex.message}" }
+        log.error(ex) { "Ошибка валидации: ${ex.message}" }
         val fieldErrors = ex.fieldErrors.stream()
             .filter { it.defaultMessage != null }
             .map { Pair.of(it.field, it.defaultMessage!!) }
@@ -57,7 +57,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(SecurityException::class)
     fun handleSecurityErrors(ex: SecurityException): String? {
-        log.error { "Ошибка безопасности: ${ex.message}" }
+        log.error(ex) { "Ошибка безопасности: ${ex.message}" }
         return "Ошибка безопасности: ${ex.message}"
     }
 
@@ -69,19 +69,31 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JwtException::class)
     fun handleJwtErrors(ex: JwtException): String? {
-        log.error { "Ошибка JWT токена: ${ex.message}" }
+        log.error(ex) { "Ошибка JWT токена: ${ex.message}" }
         return "Ошибка JWT токена: ${ex.message}"
     }
 
     /**
-     * Если поймали любое исключение [ExpiredJwtException], то возвращаем статус 500
+     * Если поймали исключение [IllegalArgumentException], то возвращаем статус 404
+     *
+     * @return ответ со статусом 404
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegalArgumentErrors(ex: IllegalArgumentException): String? {
+        log.error(ex) { "Неизвестный аргумент: ${ex.message}" }
+        return "Неизвестный аргумент: ${ex.message}"
+    }
+
+    /**
+     * Если поймали любое исключение [Exception], то возвращаем статус 500
      *
      * @return ответ со статусом 500
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception::class)
     fun handleAnyErrors(ex: Exception): String? {
-        log.error { "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}" }
+        log.error(ex) { "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}" }
         return "${ex.javaClass.simpleName}: ${ex.message}"
     }
 }

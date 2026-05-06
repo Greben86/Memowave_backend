@@ -1,10 +1,12 @@
 package dev.greben.memowave.rest
 
+import dev.greben.memowave.client.SessionClient
 import dev.greben.memowave.dto.WordRequest
 import dev.greben.memowave.dto.WordResponse
 import dev.greben.memowave.service.WordService
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_SESSION
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import dev.greben.memowave.utils.TokenType
@@ -18,12 +20,17 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.jdbc.Sql
@@ -32,7 +39,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalDateTime
 import java.util.*
-import javax.crypto.SecretKey
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,6 +56,9 @@ class WordControllerTest {
     private lateinit var mockMvc: MockMvc
 
     @MockitoBean
+    private lateinit var sessionClient: SessionClient
+
+    @MockitoBean
     private lateinit var wordService: WordService
 
     private lateinit var jwtToken: String
@@ -60,6 +69,8 @@ class WordControllerTest {
     @BeforeEach
     fun setUp() {
         jwtToken = generateToken("test@example.com", "USER", jwtSigningKey!!)
+        Mockito.`when`(sessionClient.getSessionById(anyLong(), anyString()))
+            .thenReturn(ResponseEntity<Void>(HttpStatus.OK))
     }
 
     private fun generateToken(email: String, role: String, jwtSigningKey: String): String {
@@ -67,7 +78,11 @@ class WordControllerTest {
         val keyBytes = Decoders.BASE64.decode(jwtSigningKey)
         return Jwts.builder()
             .claims()
-            .add(mapOf(AUTH_CLAIMS_TYPE to TokenType.ACCESS.name, AUTH_CLAIMS_USER_ID to 1L, AUTH_CLAIMS_LOGIN to email, AUTH_CLAIMS_ROLE to role))
+            .add(mapOf(AUTH_CLAIMS_TYPE to TokenType.ACCESS.name,
+                AUTH_CLAIMS_USER_ID to 1L,
+                AUTH_CLAIMS_LOGIN to email,
+                AUTH_CLAIMS_ROLE to role,
+                AUTH_CLAIMS_SESSION to 123L))
             .and()
             .subject(email)
             .issuedAt(currentTime)

@@ -1,18 +1,26 @@
 package dev.greben.memowave.rest
 
+import dev.greben.memowave.client.SessionClient
 import dev.greben.memowave.utils.Constants.AUTH_BEARER_PREFIX
 import dev.greben.memowave.utils.Constants.AUTH_HEADER_NAME
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -32,6 +40,15 @@ class CategoryControllerTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @MockitoBean
+    private lateinit var sessionClient: SessionClient
+
+    @BeforeEach
+    fun setUp() {
+        Mockito.`when`(sessionClient.getSessionById(anyLong(), anyString()))
+            .thenReturn(ResponseEntity<Void>(HttpStatus.OK))
+    }
 
     @Order(0)
     @Test

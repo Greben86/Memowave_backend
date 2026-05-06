@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 013_1
+      labels: Create sessions table
+      author: Viktor
+      changes:
+        - createTable:
+            tableName: sessions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_denied
+                  type: boolean
+                  defaultValue: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: sessions
+
+  - changeSet:
+      id: 013_2
+      labels: Create sequence for sessions primary key
+      author: Viktor
+      changes:
+        - createSequence:
+            sequenceName: sessions_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 999999999999999999
+            cycle: false
+            dataType: BIGINT
+      rollback:
+        - dropSequence:
+            sequenceName: sessions_seq

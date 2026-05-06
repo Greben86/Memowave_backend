@@ -15,5 +15,10 @@ data class SignInRequest(
     @Schema(description = "Пароль", example = "my_1secret1_password")
     @Size(min = 8, max = 255, message = "Длина пароля должна быть от 8 до 255 символов")
     @NotBlank(message = "Пароль не может быть пустыми")
-    val password: String
+    val password: String,
+
+    @Schema(description = "Название сессии", example = "my_session_from_android")
+    @Size(min = 10, max = 255, message = "Длина названия сессии должна быть от 10 до 255 символов")
+    @NotBlank(message = "Название сессии не может быть пустыми")
+    val session: String
 )

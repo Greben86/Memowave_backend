@@ -4,6 +4,7 @@ import dev.greben.memowave.dto.JwtAuthenticationResponse
 import dev.greben.memowave.dto.JwtRefreshRequest
 import dev.greben.memowave.dto.SignInRequest
 import dev.greben.memowave.dto.SignUpRequest
+import dev.greben.memowave.entities.User
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 class AuthenticationService(
+    private val sessionService: SessionService,
     private val userService: UserService,
     private val jwtService: JwtService,
     private val passwordEncoder: PasswordEncoder,
@@ -34,7 +36,8 @@ class AuthenticationService(
      */
     fun signUp(request: SignUpRequest): JwtAuthenticationResponse {
         val user = userService.register(request, passwordEncoder.encode(request.password))
-        val refreshToken = jwtService.generateRefreshToken(user)
+        val session = sessionService.createSessionByName(request.session, user)
+        val refreshToken = jwtService.generateRefreshToken(user, session)
         val accessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken)
         return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken)
     }
@@ -57,7 +60,8 @@ class AuthenticationService(
             .userDetailsServiceByEmail()
             .loadUserByUsername(request.email)
 
-        val refreshToken = jwtService.generateRefreshToken(user)
+        val session = sessionService.createSessionByName(request.session, user as User)
+        val refreshToken = jwtService.generateRefreshToken(user, session)
         val accessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken)
         return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken)
     }

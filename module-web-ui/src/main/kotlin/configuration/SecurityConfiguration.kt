@@ -12,7 +12,6 @@ import kotlin.io.writer
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
 class SecurityConfiguration(
     private val authProvider: ExternalJwtAuthProvider
 ) {
@@ -26,7 +25,7 @@ class SecurityConfiguration(
                 auth.anyRequest().authenticated()
             }
             .formLogin { form ->
-                form.defaultSuccessUrl("/admin/upload", true)
+                form.defaultSuccessUrl("/admin/file", true)
             }
             .authenticationProvider(authProvider) // Подключаем нашу логику
 

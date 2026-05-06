@@ -1,9 +1,11 @@
 package dev.greben.memowave.service
 
+import dev.greben.memowave.entities.Session
 import dev.greben.memowave.entities.User
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_EMAIL
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_LOGIN
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_SESSION
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import dev.greben.memowave.utils.TokenType
@@ -63,12 +65,21 @@ class JwtService(
         extractClaim(token) { it[AUTH_CLAIMS_EMAIL].toString() }
 
     /**
+     * Извлечение идентификатора сессии из токена
+     *
+     * @param token токен
+     * @return идентификатор сессии пользователя
+     */
+    fun extractSessionId(token: String): Integer =
+        extractClaim(token) { it[AUTH_CLAIMS_SESSION] as Integer }
+
+    /**
      * Генерация токена
      *
      * @param userDetails данные пользователя
      * @return токен
      */
-    fun generateRefreshToken(userDetails: UserDetails): String {
+    fun generateRefreshToken(userDetails: UserDetails, session: Session): String {
         val claims = HashMap<String?, Any?>()
         if (userDetails is User) {
             claims[AUTH_CLAIMS_TYPE] = TokenType.REFRESH
@@ -76,8 +87,9 @@ class JwtService(
             claims[AUTH_CLAIMS_LOGIN] = userDetails.username
             claims[AUTH_CLAIMS_ROLE] = userDetails.userRole
             claims[AUTH_CLAIMS_EMAIL] = userDetails.email
+            claims[AUTH_CLAIMS_SESSION] = session.id
         }
-        return generateRefreshToken(claims, userDetails)
+        return generateRefreshToken(claims, userDetails.username)
     }
 
     /**
@@ -130,11 +142,11 @@ class JwtService(
      * @param userDetails данные пользователя
      * @return refresh токен
      */
-    private fun generateRefreshToken(extraClaims: MutableMap<String?, Any?>?, userDetails: UserDetails): String {
+    private fun generateRefreshToken(extraClaims: MutableMap<String?, Any?>?, username: String): String {
         val currentTime = Date(System.currentTimeMillis())
         return Jwts.builder()
             .claims().add(extraClaims).and()
-            .subject(userDetails.username)
+            .subject(username)
             .issuedAt(currentTime)
             .expiration(DateUtils.addMinutes(currentTime, jwtRefreshExpirationMinutes))
             .signWith(getSigningKey(), Jwts.SIG.HS256)

@@ -50,3 +50,7 @@ databaseChangeLog:
   - include:
       file: 012_update_table_users.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 013_create_table_sessions.yml
+      relativeToChangelogFile: true

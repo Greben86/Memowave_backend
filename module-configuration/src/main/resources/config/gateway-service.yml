@@ -10,7 +10,7 @@ spring:
             - id: user-management-service
               uri: lb://user-management-service
               predicates:
-                - Path=/user-management-service/**,/api/users/**,/api/auth/*
+                - Path=/user-management-service/**,/api/users/**,/api/auth/*,/api/sessions/**
             - id: exercise-service
               uri: lb://exercise-service
               predicates:

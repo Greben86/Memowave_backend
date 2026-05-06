@@ -42,7 +42,7 @@ class ExternalJwtAuthProvider(
 
         try {
             // Вызов внешнего сервиса за токеном
-            val response = authClient.signIn(SignInRequest(email = username, password = password))
+            val response = authClient.signIn(SignInRequest(email = username, password = password, session = "admin_session"))
             log.info { " --> response: $response" }
 
             val token = response.accessToken

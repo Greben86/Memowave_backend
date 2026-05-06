@@ -29,7 +29,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(SecurityException::class)
     fun handleSecurityErrors(ex: SecurityException): String? {
-        log.error { "Ошибка безопасности: ${ex.message}" }
+        log.error(ex) { "Ошибка безопасности: ${ex.message}" }
         return "Ошибка безопасности: ${ex.message}"
     }
 
@@ -41,7 +41,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JwtException::class)
     fun handleJwtErrors(ex: JwtException): String? {
-        log.error { "Ошибка JWT токена: ${ex.message}" }
+        log.error(ex) { "Ошибка JWT токена: ${ex.message}" }
         return "Ошибка JWT токена: ${ex.message}"
     }
 
@@ -53,7 +53,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(MinioException::class)
     fun handleMinioError(ex: MinioException): String? {
-        log.error { "Ошибка Minio ${ex.javaClass.simpleName}: ${ex.message}" }
+        log.error(ex) { "Ошибка Minio ${ex.javaClass.simpleName}: ${ex.message}" }
         return "Ошибка Minio ${ex.javaClass.simpleName}: ${ex.message}"
     }
 
@@ -65,7 +65,7 @@ class ErrorAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception::class)
     fun handleAnyErrors(ex: Exception): String? {
-        log.error { "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}" }
+        log.error(ex) { "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}" }
         return "Ошибка работы сервера ${ex.javaClass.simpleName}: ${ex.message}"
     }
 }

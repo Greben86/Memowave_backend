@@ -8,4 +8,5 @@ object Constants {
     const val AUTH_CLAIMS_LOGIN: String = "LOGIN"
     const val AUTH_CLAIMS_ROLE: String = "ROLE"
     const val AUTH_CLAIMS_EMAIL: String = "EMAIL"
+    const val AUTH_CLAIMS_SESSION: String = "SESSION"
 }

@@ -1,6 +1,7 @@
 package dev.greben.memowave.configuration
 
 import dev.greben.memowave.service.JwtService
+import dev.greben.memowave.service.SessionService
 import dev.greben.memowave.service.UserService
 import dev.greben.memowave.utils.Constants
 import jakarta.servlet.FilterChain
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthenticationFilter(
     private val jwtService: JwtService,
+    private val sessionService: SessionService,
     private val userService: UserService
 ): OncePerRequestFilter() {
 
@@ -35,6 +37,7 @@ class JwtAuthenticationFilter(
         // Обрезаем префикс и получаем имя пользователя из токена
         val jwt: String = authHeader.substring(Constants.AUTH_BEARER_PREFIX.length)
         val email: String = jwtService.extractUserEmail(jwt)
+        val sessionId: Integer = jwtService.extractSessionId(jwt)
 
         if (StringUtils.isNotEmpty(email as CharSequence)
             && SecurityContextHolder.getContext().authentication == null
@@ -43,7 +46,9 @@ class JwtAuthenticationFilter(
                     .loadUserByUsername(email)
 
             // Если это access токен и он валиден, то аутентифицируем пользователя
-            if (jwtService.isTokenAccess(jwt) && jwtService.isTokenValid(jwt, userDetails)) {
+            if (jwtService.isTokenAccess(jwt)
+                && jwtService.isTokenValid(jwt, userDetails)
+                && sessionService.isAllowedSessionById(sessionId.toLong())) {
                 val context = SecurityContextHolder.createEmptyContext()
 
                 val authToken = UsernamePasswordAuthenticationToken(

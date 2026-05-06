@@ -30,7 +30,7 @@ class AuthErrorAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(Exception::class)
     fun handleAuthErrors(ex: Exception): String? {
-        log.error { "Ошибка авторизации ${ex.javaClass.simpleName}: ${ex.message}" }
+        log.error(ex) { "Ошибка авторизации ${ex.javaClass.simpleName}: ${ex.message}" }
         return "Ошибка авторизации ${ex.javaClass.simpleName}: ${ex.message}"
     }
 }

@@ -1,6 +1,7 @@
 package dev.greben.memowave.service
 
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_ROLE
+import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_SESSION
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_TYPE
 import dev.greben.memowave.utils.Constants.AUTH_CLAIMS_USER_ID
 import dev.greben.memowave.utils.TokenType
@@ -61,6 +62,15 @@ class JwtService(
         extractClaim(token) {
             it[AUTH_CLAIMS_USER_ID].toString().toLongOrNull()
         }
+
+    /**
+     * Извлечение идентификатора сессии из токена
+     *
+     * @param token токен
+     * @return идентификатор сессии пользователя
+     */
+    fun extractSessionId(token: String): Integer =
+        extractClaim(token) { it[AUTH_CLAIMS_SESSION] as Integer }
 
     /**
      * Извлечение данных из токена
