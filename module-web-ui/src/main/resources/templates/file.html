@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Админ-панель - Загрузка файла</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/admin.css}" href="/css/admin.css" />
+</head>
+<body>
+    <div class="navbar">
+        <h1>Админ-панель Memowave</h1>
+        <a href="/logout" class="logout-btn">Выйти</a>
+    </div>
+    <div class="container">
+        <h2>Загрузка файлов</h2>
+
+<!-- Сообщение об успехе/ошибке -->
+<div th:if="${message}" th:class="${message.contains('успешно') ? 'message success' : 'message'}">
+    <p th:text="${message}"></p>
+</div>
+
+<form method="POST" action="/admin/file/upload" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="cat">Выберите категорию:</label>
+        <select name="category" id="cat" class="form-control">
+            <!-- Цикл по списку categories из модели -->
+            <option th:each="cat : ${categories}"
+                    th:value="${cat.id}"
+                    th:text="${cat.name}">
+            </option>
+        </select>
+    </div>
+
+    <br/><br/>
+    <div class="form-group">
+        <input type="file" name="file" accept=".csv" class="form-control"/>
+    </div>
+    <button type="submit">Загрузить файл</button>
+
+<!--    <br>-->
+<!--    -->
+<!--    <button type="button" onclick="downloadFile()" class="download-btn">Выгрузить файл</button>-->
+</form>
+
+<script>
+function downloadFile() {
+    const categorySelect = document.getElementById('cat');
+    const categoryId = categorySelect.value;
+    
+    if (!categoryId) {
+        alert('Пожалуйста, выберите категорию');
+        return;
+    }
+    
+    // Создаем ссылку для скачивания
+    const link = document.createElement('a');
+    link.href = '/admin/file/download?category=' + categoryId;
+    link.download = true;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+    </div>
+</body>
+</html>

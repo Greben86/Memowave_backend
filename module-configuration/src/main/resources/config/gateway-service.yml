@@ -1,0 +1,52 @@
+spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-management-service
+              uri: lb://user-management-service
+              predicates:
+                - Path=/user-management-service/**,/api/users/**,/api/auth/*,/api/sessions/**
+            - id: exercise-service
+              uri: lb://exercise-service
+              predicates:
+                - Path=/exercise-service/**,/api/words/**,/api/categories/**
+            - id: import-export-service
+              uri: lb://import-export-service
+              predicates:
+                - Path=/import-export-service/**,/api/images/**
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://discovery-service:8080/eureka
+    healthcheck:
+      enabled: true
+  instance:
+    preferIpAddress: true
+    metadataMap:
+      management.context-path: /
+
+springdoc:
+  swagger-ui:
+    server-url: http://localhost:8080
+    server-description: Gateway Route
+    disable-swagger-default-url: true
+    urls:
+      - name: User management service
+        url: /user-management-service/v3/api-docs
+      - name: Exercise service
+        url: /exercise-service/v3/api-docs
+      - name: Import and export service
+        url: /import-export-service/v3/api-docs

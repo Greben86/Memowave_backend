@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 003_1
+      labels: Create packs table
+      author: Viktor
+      changes:
+        - createTable:
+            tableName: packs
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: language
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: packs
+
+  - changeSet:
+      id: 003_2
+      labels: Create sequence for packs primary key
+      author: Viktor
+      changes:
+        - createSequence:
+            sequenceName: packs_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 999999999999999999
+            cycle: false
+            dataType: BIGINT
+      rollback:
+        - dropSequence:
+            sequenceName: packs_seq

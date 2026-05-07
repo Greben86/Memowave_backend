@@ -1,0 +1,9 @@
+# Конфигурация самого Eureka Server
+eureka:
+  instance:
+    hostname: discovery-service # Адрес хоста
+  client:
+    registerWithEureka: false # Сервер сам себя не регистрирует
+    fetchRegistry: true       # Не запрашивать реестр сервисов
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

@@ -1,0 +1,40 @@
+spring:
+#  application:
+#    name: exercise-service
+  datasource:
+    url: "${DB_URL}"
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
+    driverClassName: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://discovery-service:8080/eureka
+    healthcheck:
+      enabled: true
+  instance:
+    # Не использовать IP, а использовать hostname
+    preferIpAddress: false
+    hostname: exercise-service
+    non-secure-port: ${server.port}
+    instance-enabled-on-itself: true
+    metadata-map:
+      management.context-path: /
+
+springdoc:
+  swagger-ui:
+    server-url: ${SWAGGER_SERVER_URL:http://localhost:8080/exercise-service}
+    server-description: Gateway Route for User Management Service
+  api-docs:
+    path: /exercise-service/v3/api-docs

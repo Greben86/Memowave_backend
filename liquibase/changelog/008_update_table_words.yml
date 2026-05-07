@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 008_1
+      labels: Add repetition count and next repetition date to words table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: repetition_count
+                  type: INTEGER
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: next_repetition_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: repetition_count
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: next_repetition_date

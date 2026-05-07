@@ -1,0 +1,76 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 005_1
+      labels: Create words table
+      author: Viktor
+      changes:
+        - createTable:
+            tableName: words
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_words_categories
+                    references: categories(id)
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: translate
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: example
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: image_url
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: words
+
+  - changeSet:
+      id: 005_2
+      labels: Create sequence for words primary key
+      author: Viktor
+      changes:
+        - createSequence:
+            sequenceName: words_seq
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 999999999999999999
+            cycle: false
+            dataType: BIGINT
+      rollback:
+        - dropSequence:
+            sequenceName: words_seq

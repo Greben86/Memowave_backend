@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 007_1
+      labels: Add user_id column to categories table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: categories
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: categories
+            columns:
+              - column:
+                  name: user_id

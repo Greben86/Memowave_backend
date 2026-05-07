@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - preConditions:
+     onFail: HALT
+     onError: HALT
+
+  - changeSet:
+      id: 002_1
+      labels: Insert the first super user
+      author: Viktor
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueComputed: "NEXTVAL('users_seq')"
+              - column:
+                  name: username
+                  value: "root"
+              - column:
+                  name: email
+                  value: "root@email.ru"
+              - column:
+                  name: user_role
+                  value: "ROLE_ADMIN"
+              - column:
+                  name: password_hash
+                  value: "$2a$10$JOR8K7ZMjamn41JrXg6km.U4kLoV4TTpkKLEwLAYTORNH2cijNsba"
+              - column:
+                  name: created_at
+                  valueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: updated_at
+                  valueComputed: "CURRENT_TIMESTAMP"

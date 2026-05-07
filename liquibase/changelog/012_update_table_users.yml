@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 012_1
+      labels: Add experience column to users table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: experience
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: experience

@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 009_1
+      labels: Add user_id column to words table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: user_id
+
+  - changeSet:
+      id: 009_2
+      labels: Populate user_id in words table from categories
+      author: Viktor
+      changes:
+        - sql:
+            sql: |
+              UPDATE words w
+              SET user_id = (SELECT c.user_id FROM categories c WHERE c.id = w.category_id)
+              WHERE exists (SELECT c.id FROM categories c WHERE c.id = w.category_id);

@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 010_1
+      labels: Add icon_name column to categories table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: categories
+            columns:
+              - column:
+                  name: icon_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: categories
+            columns:
+              - column:
+                  name: icon_name
