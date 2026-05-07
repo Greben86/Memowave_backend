@@ -30,7 +30,7 @@ class EmailNotificationService(
             val simpleMailMessage = SimpleMailMessage()
             simpleMailMessage.setTo(email)
             simpleMailMessage.subject = SUBJECT
-            simpleMailMessage.text = "OTP: $otpCode"
+            simpleMailMessage.text = "Memowave OTP: $otpCode"
             emailSender.send(simpleMailMessage)
 
             log.info { "Сообщение Email отправлено успешно" }
