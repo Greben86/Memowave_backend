@@ -17,6 +17,7 @@ interface UserMapper {
 
     @Mapping(target = "userRole", constant = "ROLE_USER")
     @Mapping(target = "passwordHash", source = "encodedPassword")
+    @Mapping(target = "emailVerified", expression = "java(false)")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     fun fromDto(dto: SignUpRequest, encodedPassword: String): User
@@ -26,6 +27,7 @@ interface UserMapper {
     /**
      * Обновление сущности User на основе данных из UserResponse
      */
+    @Mapping(target = "emailVerified", ignore = true)
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     fun updateFromDto(@MappingTarget entity: User, dto: UserResponse): User
 }

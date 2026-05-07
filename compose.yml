@@ -132,6 +132,10 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/memowave_db
       DB_USERNAME: pgadmin
       DB_PASSWORD: pgadmin
+      SMTP_HOST: fakesmtp
+      SMTP_PORT: 1025
+      EMAIL_USERNAME: admin@mail.me
+      EMAIL_PASSWORD: admin
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://user-management-service:8080/actuator/health" ]
@@ -281,6 +285,21 @@ services:
         condition: service_started
       exerciseservice:
         condition: service_started
+
+  fakesmtp:
+    container_name: fake-smtp-server
+    image: haravich/fake-smtp-server:latest
+    ports:
+#      - "1025:1025"
+      - "1080:1080"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - memowave-network
 
 volumes:
   database-data:

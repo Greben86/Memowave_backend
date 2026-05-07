@@ -31,10 +31,14 @@ data class User(
     @Column(name = "email", nullable = false)
     var email: String?,
     @Column(name = "experience", nullable = false)
-    var experience: Long
+    var experience: Long,
+    @Column(name = "is_email_verified", nullable = false)
+    var emailVerified: Boolean?,
+    @Column(name = "otp_code", nullable = true)
+    var otpCode: String?,
 ) : UserDetails, AbstractEntity() {
 
-    constructor(): this(username = null, userRole = null, passwordHash = null, imageUrl = null, email = null, experience = 0)
+    constructor(): this(username = null, userRole = null, passwordHash = null, imageUrl = null, email = null, experience = 0, emailVerified = false, otpCode = null)
 
     override fun getUsername(): String? = username
 
