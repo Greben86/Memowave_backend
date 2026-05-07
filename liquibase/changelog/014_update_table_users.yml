@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 014_1
+      labels: Add columns to users table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: is_email_verified
+                  type: boolean
+                  defaultValue: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: otp_code
+                  type: VARCHAR(10)
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: is_verified
+              - column:
+                  name: otp_code

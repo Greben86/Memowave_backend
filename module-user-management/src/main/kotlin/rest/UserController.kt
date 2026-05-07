@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -78,10 +79,25 @@ class UserController(
         description = "Требуется роль ADMIN")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
-    fun setAdmin(@PathVariable("id") id: Long): ResponseEntity<Void> {
+    fun setAdmin(@PathVariable("id") id: Long) {
         log.info { "Добавление роли ADMIN пользователю" }
         userService.setAdmin(id)
-        return ResponseEntity.ok().build()
+    }
+
+    @PutMapping(value = ["/{id}/send-code"])
+    @Operation(summary = "Отправка нового OTP пользователю")
+    @ResponseStatus(HttpStatus.OK)
+    fun sendOtpCode(@PathVariable("id") id: Long) {
+        log.info { "Отправка нового OTP пользователю $id" }
+        userService.sendOtpCode(id)
+    }
+
+    @PutMapping(value = ["/{id}/verify-email"])
+    @Operation(summary = "Верификация электронной почты через OTP")
+    @ResponseStatus(HttpStatus.OK)
+    fun verifyEmail(@PathVariable("id") id: Long, @RequestParam("code") code: String) {
+        log.info { "Верификация электронной почты через OTP" }
+        userService.verifyEmail(id, code)
     }
 
     @Operation(summary = "Информация о текущем пользователе")
@@ -113,8 +129,9 @@ class UserController(
     @PutMapping(value = ["/me/change-password"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun changePassword(@RequestBody @Valid request: ChangePasswordRequest): ResponseEntity<Unit> {
         log.info { "Смена пароля пользователя" }
-        
-        if (authenticationService.changePassword(request.currentPassword, request.newPassword)) {
+
+        if (userService.getOTPCodeCurrentUser(request.verificationCode)
+            && authenticationService.changePassword(request.currentPassword, request.newPassword)) {
             return ResponseEntity.ok().build()
         }
         return ResponseEntity.badRequest().build()

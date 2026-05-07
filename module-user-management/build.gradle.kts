@@ -21,6 +21,7 @@ val mapstructVersion = "1.6.3"
 val mockitoVersion = "5.14.0"
 val commonsLangVersion = "3.17.0"
 val loggingVersion = "7.0.3"
+val opensmppVersion = "3.0.2"
 
 dependencies {
     implementation(project(":module-core"))
@@ -28,6 +29,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.opensmpp:opensmpp-core:$opensmppVersion")
     implementation("org.springframework.cloud:spring-cloud-starter-config:${springCloudVersion}")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudVersion}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

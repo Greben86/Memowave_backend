@@ -11,5 +11,9 @@ data class ChangePasswordRequest(
 
     @Schema(description = "Новый пароль", example = "new_password")
     @NotBlank(message = "Новый пароль не может быть пустыми")
-    val newPassword: String
+    val newPassword: String,
+
+    @Schema(description = "Код подтверждения из email для смены пароля", example = "1234567890")
+    @NotBlank(message = "Код подтверждения не может быть пустыми")
+    val verificationCode: String
 )

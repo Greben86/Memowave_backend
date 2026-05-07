@@ -5,11 +5,14 @@ import dev.greben.memowave.dto.UserResponse
 import dev.greben.memowave.entities.User
 import dev.greben.memowave.mapper.UserMapper
 import dev.greben.memowave.repository.UserRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import java.util.Random
+import java.util.function.Predicate
 
 /**
  * Сервис управления пользователями
@@ -18,8 +21,12 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserService(
     private val repository: UserRepository,
-    private val mapper: UserMapper
+    private val mapper: UserMapper,
+    private val emailNotificationService: EmailNotificationService
 ) {
+
+    val ALPHABET: String = "1234567890"
+    val lengthOTP: Int = 5;
 
     /**
      * Получить пользователя по идентификатору
@@ -44,7 +51,7 @@ class UserService(
     }
 
     /**
-     * Выдача прав администратора пользователю
+     * Верификация электронной почты пользователя
      *
      * @param id идентификатор пользователя
      */
@@ -54,6 +61,54 @@ class UserService(
             .orElseThrow { IllegalArgumentException("Пользователь не найден") }
         user.userRole = "ROLE_ADMIN"
         repository.save(user)
+    }
+
+    /**
+     * Верификация почты пользователя по OTP
+     *
+     * @param id идентификатор пользователя
+     * @param code OTP для верификации
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun verifyEmail(id: Long, code: String) {
+        val user = repository.findById(id)
+            .orElseThrow { IllegalArgumentException("Пользователь не найден") }
+
+        if (code == user.otpCode) {
+            user.emailVerified = true
+            repository.save(user)
+        } else {
+            throw IllegalArgumentException("Код не подходит")
+        }
+    }
+
+    /**
+     * Проверка OTP-кода текущего пользователя
+     *
+     * @param code OTP для верификации
+     */
+    fun getOTPCodeCurrentUser(code: String): Boolean {
+        val user = getCurrentUser() ?: throw IllegalArgumentException("Пользователь не найден")
+        if (code == user.otpCode) {
+            return true
+        } else {
+            throw IllegalArgumentException("Код не подходит")
+        }
+    }
+
+    /**
+     * Отправка нового OTP пользователю
+     *
+     * @param id идентификатор пользователя
+     */
+    fun sendOtpCode(id: Long) {
+        val user = repository.findById(id)
+            .orElseThrow { IllegalArgumentException("Пользователь не найден") }
+
+        val code = generateKey() { it == user.otpCode }
+        user.otpCode = code
+        repository.save(user)
+        emailNotificationService.sendOtpCode(user.email!!, user.otpCode!!)
     }
 
     /**
@@ -69,6 +124,8 @@ class UserService(
         }
 
         val entity = mapper.fromDto(user, encodedPassword)
+        entity.otpCode = generateKey() { false }
+        emailNotificationService.sendOtpCode(entity.email!!, entity.otpCode!!)
         return repository.save(entity)
     }
 
@@ -174,5 +231,30 @@ class UserService(
         // Обновление пароля
         user.passwordHash = encodedPassword
         repository.save(user)
+    }
+
+    /**
+     * Метод формирования уникального кода ссылки для короткой ссылки
+     * Каждый символ кода выбирается случайным образом, после чего код проверяется на совпадение с уже
+     * сохраненными активными кодами, если совпадений нет, то код принимается, если нет - пробуем еще раз
+     *
+     * @param size размер кода
+     * @param existChecker лямбда для проверки уникальности кода
+     *
+     * @return уникальный для пользователя код
+     */
+    private fun generateKey(existChecker: Predicate<String?>): String {
+        var random = Random()
+        var key: String
+        do {
+            // Генерация строки случайным образом
+            val sb = StringBuilder()
+            for (i in 0..<lengthOTP) {
+                sb.append(ALPHABET.get(random.nextInt(ALPHABET.length)))
+            }
+            key = sb.toString()
+        } while (existChecker.test(key))
+
+        return key
     }
 }

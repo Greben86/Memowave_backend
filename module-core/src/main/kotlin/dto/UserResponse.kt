@@ -22,5 +22,7 @@ data class UserResponse(
     @Email
     val email: String?,
     @Schema(description = "Опыт пользователя", example = "3")
-    val experience: Long?
+    val experience: Long?,
+    @Schema(description = "Email подтвержден", example = "true", readOnly = true)
+    val emailVerified: Boolean?
 )
