@@ -37,18 +37,21 @@ class SessionController(
 
     @Operation(summary = "Получить сессию по идентификатору")
     @GetMapping(value = ["/{sessionId}"])
-    @ResponseStatus(HttpStatus.OK)
-    fun getSessionById(@PathVariable("sessionId") sessionId: Long): SessionResponse? {
+    fun getSessionById(@PathVariable("sessionId") sessionId: Long): ResponseEntity<SessionResponse?> {
         log.info { "Получить сессию по идентификатору $sessionId" }
-        return sessionService.getSessionById(sessionId)
+        val response = sessionService.getSessionById(sessionId)
+        return if (response == null) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        } else {
+            ResponseEntity.ok().body(response)
+        }
     }
 
     @PutMapping(value = ["/{sessionId}/set-denied"])
     @Operation(summary = "Выключить сессию")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun setDenied(@PathVariable("sessionId") sessionId: Long): ResponseEntity<Void> {
+    fun setDenied(@PathVariable("sessionId") sessionId: Long) {
         log.info { "Отключение сессии $sessionId" }
         sessionService.setDenied(sessionId)
-        return ResponseEntity.ok().build()
     }
 }

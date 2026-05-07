@@ -56,7 +56,7 @@ class SecurityConfiguration(
                 .requestMatchers("/api/auth/*").permitAll()
                 .requestMatchers("/actuator/*").permitAll()
                 .requestMatchers("/user-management-service/**").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
         }
         http.sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

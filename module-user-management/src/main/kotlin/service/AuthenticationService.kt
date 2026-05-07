@@ -39,7 +39,7 @@ class AuthenticationService(
         val session = sessionService.createSessionByName(request.session, user)
         val refreshToken = jwtService.generateRefreshToken(user, session)
         val accessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken)
-        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken)
+        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken, session = session.name!!)
     }
 
     /**
@@ -63,7 +63,7 @@ class AuthenticationService(
         val session = sessionService.createSessionByName(request.session, user as User)
         val refreshToken = jwtService.generateRefreshToken(user, session)
         val accessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken)
-        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken)
+        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken, session = session.name!!)
     }
 
     /**
@@ -82,8 +82,14 @@ class AuthenticationService(
             "Refresh Token просрочен"
         }
 
+        val sessionId: Integer = jwtService.extractSessionId(refreshToken)
+        check(sessionService.isAllowedSessionById(sessionId.toLong())) {
+            "Сессия не найдена"
+        }
+
+        val session = sessionService.getSessionById(sessionId.toLong())
         val accessToken = jwtService.generateAccessTokenFromRefreshToken(refreshToken)
-        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken)
+        return JwtAuthenticationResponse(accessToken = accessToken, refreshToken = refreshToken, session = session!!.name!!)
     }
 
     /**

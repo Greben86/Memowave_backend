@@ -17,6 +17,11 @@ class SessionService (
      *
      * @return true если сессия активна, иначе false
      */
-    fun isAllowedSessionById(id: Long, token: String): Boolean =
-        sessionClient.getSessionById(id, Constants.AUTH_BEARER_PREFIX + token).statusCode.is2xxSuccessful
+    fun isAllowedSessionById(id: Long, token: String): Boolean {
+        return try {
+            sessionClient.getSessionById(id, Constants.AUTH_BEARER_PREFIX + token).statusCode.is2xxSuccessful
+        } catch (_: Exception) {
+            false
+        }
+    }
 }

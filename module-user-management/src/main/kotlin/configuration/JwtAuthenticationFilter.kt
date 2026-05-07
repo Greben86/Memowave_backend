@@ -4,6 +4,7 @@ import dev.greben.memowave.service.JwtService
 import dev.greben.memowave.service.SessionService
 import dev.greben.memowave.service.UserService
 import dev.greben.memowave.utils.Constants
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -20,6 +21,9 @@ class JwtAuthenticationFilter(
     private val sessionService: SessionService,
     private val userService: UserService
 ): OncePerRequestFilter() {
+    companion object {
+        val log = KotlinLogging.logger {}
+    }
 
     override fun doFilterInternal(
         request: HttpServletRequest,

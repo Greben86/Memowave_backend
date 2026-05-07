@@ -70,7 +70,12 @@ class JwtService(
      * @return идентификатор сессии пользователя
      */
     fun extractSessionId(token: String): Integer =
-        extractClaim(token) { it[AUTH_CLAIMS_SESSION] as Integer }
+        extractClaim(token) sessionid@{
+            if (it.contains(AUTH_CLAIMS_SESSION))
+                return@sessionid it[AUTH_CLAIMS_SESSION] as Integer
+
+            return@sessionid -1 as Integer
+        }
 
     /**
      * Извлечение данных из токена
