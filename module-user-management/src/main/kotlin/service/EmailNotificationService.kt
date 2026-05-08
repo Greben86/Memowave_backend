@@ -1,6 +1,5 @@
 package dev.greben.memowave.service
 
-import dev.greben.memowave.entities.User
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
