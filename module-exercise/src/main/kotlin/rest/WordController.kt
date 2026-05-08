@@ -90,14 +90,10 @@ class WordController(
     }
 
     @Operation(summary = "Удалить слово")
-    @DeleteMapping(value = ["{wordId}"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.APPLICATION_JSON_VALUE])
+    @DeleteMapping(value = ["{wordId}"])
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteWord(
-        @PathVariable("wordId") wordId: Long
-    ) {
+    fun deleteWord(@PathVariable("wordId") wordId: Long) {
         log.info { "Удаление слова wordId=$wordId" }
-        return serviceWord.deleteWord(wordId)
+        serviceWord.deleteWord(wordId)
     }
 }

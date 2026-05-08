@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
@@ -107,7 +106,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
         val wordResponse2 = WordResponse(
             id = 2L,
@@ -122,7 +128,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
         val expectedWords = listOf(wordResponse1, wordResponse2)
 
@@ -159,7 +172,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
         val expectedWords = listOf(wordResponse)
 
@@ -192,7 +212,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
 
         Mockito.`when`(wordService.saveWord(Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)
@@ -225,7 +252,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
         val wordResponse2 = WordResponse(
             id = 2L,
@@ -240,7 +274,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
         val expectedResponses = listOf(wordResponse1, wordResponse2)
 
@@ -279,7 +320,14 @@ class WordControllerTest {
             prevEaseFactor = 2.5,
             prevInterval = 0,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            updatedAt = LocalDateTime.now(),
+            stability = 2.5,
+            difficulty = 2.5,
+            interval = 0,
+            dueDate = LocalDateTime.now(),
+            reviewCount = 0,
+            lastReview = null,
+            phase = 0
         )
 
         Mockito.`when`(wordService.updateWord(Mockito.eq(wordId), Mockito.any(WordRequest::class.java))).thenReturn(wordResponse)

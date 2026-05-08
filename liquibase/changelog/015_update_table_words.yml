@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - preConditions:
+      onFail: HALT
+      onError: HALT
+
+  - changeSet:
+      id: 015_1
+      labels: Add new columns to words table
+      author: Viktor
+      changes:
+        - addColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: stability
+                  type: DOUBLE
+                  defaultValue: 2.5
+                  constraints:
+                    nullable: false
+              - column:
+                  name: difficulty
+                  type: DOUBLE
+                  defaultValue: 2.5
+                  constraints:
+                    nullable: false
+              - column:
+                  name: current_interval
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: due_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: review_count
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_review
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: phase
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: words
+            columns:
+              - column:
+                  name: stability
+              - column:
+                  name: difficulty
+              - column:
+                  name: current_interval
+              - column:
+                  name: due_date
+              - column:
+                  name: review_count
+              - column:
+                  name: last_review
+              - column:
+                  name: phase

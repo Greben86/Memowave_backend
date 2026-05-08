@@ -42,8 +42,23 @@ class Word(
     @Column(name = "prev_ease_factor", nullable = false)
     var prevEaseFactor: Double,
     @Column(name = "prev_interval", nullable = false)
-    var prevInterval: Long
+    var prevInterval: Long,
+    @Column(name = "stability", nullable = false)
+    var stability: Double = 2.5,
+    @Column(name = "difficulty", nullable = false)
+    var difficulty: Double = 2.5,
+    @Column(name = "current_interval", nullable = false)
+    var interval: Long = 0L,
+    @Column(name = "due_date", nullable = true)
+    var dueDate: LocalDateTime?,
+    @Column(name = "review_count", nullable = false)
+    var reviewCount: Long = 0L,
+    @Column(name = "last_review", nullable = true)
+    var lastReview: LocalDateTime?,
+    @Column(name = "phase", nullable = false)
+    var phase: Long = 0L
 ) : AbstractEntity() {
     constructor(): this(category = null, text = null, translate = null, example = null, imageUrl = null,
-        repetitionCount = 0, nextRepetitionDate = null, quality = 0, prevEaseFactor = 2.5, prevInterval = 0)
+        repetitionCount = 0, nextRepetitionDate = null, quality = 0, prevEaseFactor = 2.5, prevInterval = 0,
+        stability = 2.5, difficulty = 2.5, interval = 0, dueDate = LocalDateTime.now(), reviewCount = 0, lastReview = null, phase = 0)
 }

@@ -32,5 +32,19 @@ data class WordResponse(
     @Schema(description = "Дата добавления слова", example = "2026-03-13T10:00:00")
     var createdAt: LocalDateTime?,
     @Schema(description = "Дата обновления слова", example = "2026-03-13T10:00:00")
-    var updatedAt: LocalDateTime?
+    var updatedAt: LocalDateTime?,
+    @Schema(description = "Параметр стабильности", example = "2.5")
+    var stability: Double,
+    @Schema(description = "Параметр сложности", example = "2.5")
+    var difficulty: Double,
+    @Schema(description = "Текущий интервал повторения", example = "0")
+    var interval: Long,
+    @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
+    var dueDate: LocalDateTime?,
+    @Schema(description = "Количество повторений", example = "0")
+    var reviewCount: Long,
+    @Schema(description = "Дата последнего повторения", example = "2026-03-13T10:00:00")
+    var lastReview: LocalDateTime?,
+    @Schema(description = "Параметр phase", example = "0")
+    var phase: Long
 )

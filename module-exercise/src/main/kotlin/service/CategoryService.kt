@@ -189,7 +189,14 @@ class CategoryService(
                 nextRepetitionDate = LocalDateTime.now(),
                 quality = 0,
                 prevEaseFactor = 2.5,
-                prevInterval = 0
+                prevInterval = 0,
+                stability = 2.5,
+                difficulty = 2.5,
+                interval = 0,
+                dueDate = LocalDateTime.now(),
+                reviewCount = 0,
+                lastReview = null,
+                phase = 0
             )
             wordRepository.save(newWord)
         }
