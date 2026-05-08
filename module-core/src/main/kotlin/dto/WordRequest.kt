@@ -3,6 +3,7 @@ package dev.greben.memowave.dto
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
+import java.time.LocalDateTime
 
 @Schema(description = "Слово - перевод: запрос")
 data class WordRequest(
@@ -25,11 +26,25 @@ data class WordRequest(
     @Schema(description = "Количество повторений", example = "0")
     val repetitionCount: Int = 0,
     @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
-    val nextRepetitionDate: java.time.LocalDateTime?,
+    val nextRepetitionDate: LocalDateTime?,
     @Schema(description = "Качество повторения", example = "0")
     var quality: Long,
     @Schema(description = "Предыдущий коэффициент повторения", example = "2.5")
     var prevEaseFactor: Double,
     @Schema(description = "Предыдущий интервал повторения", example = "0")
-    var prevInterval: Long
+    var prevInterval: Long,
+    @Schema(description = "Параметр стабильности", example = "2.5")
+    var stability: Double,
+    @Schema(description = "Параметр сложности", example = "2.5")
+    var difficulty: Double,
+    @Schema(description = "Текущий интервал повторения", example = "0")
+    var interval: Long,
+    @Schema(description = "Дата следующего повторения", example = "2026-03-13T10:00:00")
+    var dueDate: LocalDateTime?,
+    @Schema(description = "Количество повторений", example = "0")
+    var reviewCount: Long,
+    @Schema(description = "Дата последнего повторения", example = "2026-03-13T10:00:00")
+    var lastReview: LocalDateTime?,
+    @Schema(description = "Параметр phase", example = "0")
+    var phase: Long
 )

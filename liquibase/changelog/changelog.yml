@@ -58,3 +58,7 @@ databaseChangeLog:
   - include:
       file: 014_update_table_users.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: 015_update_table_words.yml
+      relativeToChangelogFile: true
